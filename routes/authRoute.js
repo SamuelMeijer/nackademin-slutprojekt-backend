@@ -40,24 +40,21 @@ router.post('/', async (req, res) => {
                     iss: 'sinus',
                     // Utgångsdatum - en timme i detta fall
                     exp: Math.floor(Date.now() / 1000) + (60 + 60),
-                    // Kanske senare????
+                    // Kanske senare?
                     uid: user._id
                 }
 
-                console.log(user.role)
                 if (user.role == 'admin') {
                     const token = jwt.sign(payload, process.env.SECRET_ADMIN)
                     res.cookie('auth-token-admin', token)
                     res.send(`Hej ${user.name}! Du är nu i ${user.role}-läge`)
-                } else if (user.role == 'user') {
-                    const token = jwt.sign(payload, process.env.SECRET_USER)
-                    res.cookie('auth-token-user', token)
+                } else if (user.role == 'customer') {
+                    const token = jwt.sign(payload, process.env.SECRET_CUSTOMER)
+                    res.cookie('auth-token-customer', token)
                     res.send(`Hej ${user.name}! Du är nu i ${user.role}-läge`)
                 } else {
                     res.send('Du har ej behörighet')
                 }
-
-
 
             } else {
                 res.send('Användarnamn eller lösenord stämmer ej!')
@@ -69,7 +66,7 @@ router.post('/', async (req, res) => {
 
 
 // Bara test för auth
-router.get('/', async (req, res) => {
+router.get('/',  (req, res) => {
     if (req.cookies['auth-token-admin']) {
         const token =  req.cookies['auth-token-admin']
 

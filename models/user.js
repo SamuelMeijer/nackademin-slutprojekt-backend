@@ -9,7 +9,7 @@ const userSchema = mongoose.Schema({
     email: { type: String, required: true },
     password: { type: String, required: true },
     name: { type: String, required: true },
-    role: { type: String, required: true }, // or customer
+    role: String, // or customer
 
     adress: {
         street: { type: String, required: true },
@@ -17,10 +17,10 @@ const userSchema = mongoose.Schema({
         city: { type: String, required: true }
     },
     // Hämta från order sen!
-    orderHistory: [{
+    /* orderHistory: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Order'
-    }]
+    }] */
 })
 
 const User = mongoose.model('User', userSchema);

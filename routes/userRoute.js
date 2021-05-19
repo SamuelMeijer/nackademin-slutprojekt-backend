@@ -8,14 +8,10 @@ const User = require('../models/user');
 
 // json web token
 const jwt = require('jsonwebtoken');
-// cookie parser
-const cookieParser = require('cookie-parser');
 
 // bcrypt
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
-
-
 
 // For customers
 router.post('/', (req, res) => {
@@ -25,11 +21,12 @@ router.post('/', (req, res) => {
         } else {
             const newUser = new User({
 
-                _id: new mongoose.Schema.Types.ObjectId(),
+                _id: new mongoose.Types.ObjectId(),
                 email: req.body.email,
                 password: hash,
                 name: req.body.name,
-                role: req.body.role, // or customer
+                // automatiskt att customer ska skrivas in, fråga Hans...
+                role: 'customer', 
                 adress: {
                     street: req.body.street,
                     zip: req.body.zip,
