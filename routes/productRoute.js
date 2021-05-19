@@ -45,4 +45,18 @@ router.delete('/:id', async (req, res) => {
   res.send('Product has been deleted');
 });
 
+//Update product
+router.patch('/:id', async (req, res) => {
+  try {
+    const productUpdate = await Product.findByIdAndUpdate(
+      { _id: req.params.id },
+      { $set: { title: req.body.title }, $set: { price: req.body.price } }
+    );
+
+    res.json(productUpdate);
+  } catch (err) {
+    res.json({ message: err });
+  }
+});
+
 module.exports = router;
