@@ -1,6 +1,52 @@
-const express = require('express')
-const app = express()
+const express = require('express');
+const app = express();
+const mongoose = require('mongoose');
+require('dotenv').config();
 
-app.use( express.static('public') )
+//import routes
+const productRoute = require('./routes/productRoute');
 
-module.exports = app
+//middleware
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.static('public'));
+
+//Routes
+app.use('/api/products', productRoute);
+
+//Connect to DB
+mongoose
+  .connect(process.env.DB_CONNECT, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useFindAndModify: false,
+    dbName: 'timsinus',
+  })
+  .then(() => {
+    console.log('Connected to db');
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+
+/* app.post('/api/products', (req, res) => {
+  const newProduct = new Product({
+    _id: new mongoose.Types.ObjectId(),
+    title: req.body.title,
+    price: req.body.price,
+    shortDesc: req.body.shortDesc,
+    longDesc: req.body.longDesc,
+    imgFile: req.body.imgFile,
+  });
+  newProduct.save((err) => {
+    if (err) {
+      console.error(err);
+    } else {
+      console.log('The new product has been saved');
+      res.json('The new product has been saved');
+    }
+  });
+  console.log(req.body);
+}); */
+
+module.exports = app;
