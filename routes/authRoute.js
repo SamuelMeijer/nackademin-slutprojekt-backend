@@ -10,7 +10,7 @@ const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
 // json web token
-const jwt = require('jsonwebtoken'); 
+const jwt = require('jsonwebtoken')
 
 
 router.post('/', async (req, res) => {
