@@ -1,5 +1,10 @@
+const mongoose = require('mongoose');
+const router = require('express').Router();
+const User = require('../models/user');
+
+
 // For customers
-app.post('/', (req, res) => {
+router.post('/', (req, res) => {
     bcrypt.hash(req.body.password, saltRounds, (err, hash) => {
         if (err) {
             res.json(err)

@@ -1,3 +1,8 @@
+const mongoose = require('mongoose');
+const router = require('express').Router();
+const Product = require('../models/product');
+
+
 // Lägga till produkter
 router.post('/', (req, res) => {
 

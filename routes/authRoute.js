@@ -1,4 +1,8 @@
-app.post('/api/auth', async (req, res) => {
+const mongoose = require('mongoose');
+const router = require('express').Router();
+// const Product = require('../models/product');
+
+router.post('/api/auth', async (req, res) => {
 
     // Söker efter användarnamnet i USER-collectionen
     const user = await User.findOne({ email: req.body.email })
