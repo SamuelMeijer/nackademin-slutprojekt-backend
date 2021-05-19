@@ -5,13 +5,6 @@ const mongoose = require('mongoose');
 // json web token
 const jwt = require('jsonwebtoken');
 
-// cookie parser
-const cookieParser = require('cookie-parser');
-
-// bcrypt
-const bcrypt = require('bcrypt');
-const saltRounds = 10;
-
 require('dotenv').config();
 
 //import routes

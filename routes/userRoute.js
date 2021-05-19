@@ -3,6 +3,17 @@ const router = require('express').Router();
 const User = require('../models/user');
 
 
+// json web token
+const jwt = require('jsonwebtoken');
+// cookie parser
+const cookieParser = require('cookie-parser');
+
+// bcrypt
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
+
+
+
 // For customers
 router.post('/', (req, res) => {
     bcrypt.hash(req.body.password, saltRounds, (err, hash) => {

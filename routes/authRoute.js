@@ -1,6 +1,17 @@
 const mongoose = require('mongoose');
 const router = require('express').Router();
-// const Product = require('../models/product');
+const User = require('../models/user');
+const userRoute = require('../routes/userRoute')
+// cookie parser
+const cookieParser = require('cookie-parser');
+
+// bcrypt
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
+
+// json web token
+const jwt = require('jsonwebtoken'); 
+
 
 router.post('/', async (req, res) => {
 
