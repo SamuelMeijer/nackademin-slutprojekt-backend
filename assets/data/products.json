@@ -1,0 +1,72 @@
+{
+    "hoodies": [
+        {
+            "_id": "39y7gbbZk1u4ABnv",
+            "title": "Hoodie Ash",
+            "price": 999,
+            "shortDesc": "Unisex",
+            "longDesc": "Skate ipsum dolor sit amet...",
+            "imgFile": "hoodie-ash.png"
+        },
+        {
+            "_id": "39y7gbbZk1u4ABnv",
+            "title": "Hoodie Fire",
+            "price": 999,
+            "shortDesc": "Unisex",
+            "longDesc": "Skate ipsum dolor sit amet...",
+            "imgFile": "hoodie-fire.png"
+        },
+        {
+            "_id": "39y7gbbZk1u4ABnv",
+            "title": "Hoodie Ocean",
+            "price": 999,
+            "shortDesc": "Unisex",
+            "longDesc": "Skate ipsum dolor sit amet...",
+            "imgFile": "hoodie-ocean.png"
+        }
+    ],
+    "skateboards": [
+        {
+            "_id": "39y7gbbZk1u4ABnv",
+            "title": "Skateboard Generic",
+            "price": 1299,
+            "shortDesc": "Unisex",
+            "longDesc": "Skate ipsum dolor sit amet...",
+            "imgFile": "skateboard-generic.png"
+        },
+        {
+            "_id": "39y7gbbZk1u4ABnv",
+            "title": "Skateboard Greta",
+            "price": 1299,
+            "shortDesc": "Unisex",
+            "longDesc": "Skate ipsum dolor sit amet...",
+            "imgFile": "skateboard-greta.png"
+        }
+    ],
+    "wheels": [
+        {
+            "_id": "39y7gbbZk1u4ABnv",
+            "title": "Wheel Rocket",
+            "price": 199,
+            "shortDesc": "Unisex",
+            "longDesc": "Skate ipsum dolor sit amet...",
+            "imgFile": "wheel-rocket.png"
+        },
+        {
+            "_id": "39y7gbbZk1u4ABnv",
+            "title": "Wheel Spinner",
+            "price": 199,
+            "shortDesc": "Unisex",
+            "longDesc": "Skate ipsum dolor sit amet...",
+            "imgFile": "wheel-spinner.png"
+        },
+        {
+            "_id": "39y7gbbZk1u4ABnv",
+            "title": "Wheel Wave",
+            "price": 199,
+            "shortDesc": "Unisex",
+            "longDesc": "Skate ipsum dolor sit amet...",
+            "imgFile": "wheel-wave.png"
+        }
+    ]
+}
