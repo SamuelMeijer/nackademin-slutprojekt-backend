@@ -2,8 +2,13 @@ const mongoose = require('mongoose');
 const router = require('express').Router();
 const User = require('../models/user');
 const userRoute = require('../routes/userRoute')
+
 // cookie parser
 const cookieParser = require('cookie-parser');
+
+// Behövs för att kunna hämta req.cookies
+router.use(cookieParser())
+
 
 // bcrypt
 const bcrypt = require('bcrypt');
@@ -55,7 +60,6 @@ router.post('/', async (req, res) => {
                 } else {
                     res.send('Du har ej behörighet')
                 }
-
             } else {
                 res.send('Användarnamn eller lösenord stämmer ej!')
             }
@@ -64,40 +68,41 @@ router.post('/', async (req, res) => {
 })
 
 
-
 // Bara test för auth
-router.get('/',  (req, res) => {
+router.get('/', (req, res) => {
+
+
     if (req.cookies['auth-token-admin']) {
-        const token =  req.cookies['auth-token-admin']
+
+        const token = req.cookies['auth-token-admin']
 
         jwt.verify(token, process.env.SECRET_ADMIN, async (err, payload) => {
+
             if (err) {
                 res.json(err)
             } else {
-
                 res.send('Du är en admin')
                 // vad som ska göras om man är admin
-
             }
         })
 
-    } else if (req.cookies['auth-token-user']) {
+    } else if (req.cookies['auth-token-customer']) {
 
-        const token = req.cookies['auth-token-user']
+        const token = req.cookies['auth-token-customer']
 
-        jwt.verify(token, process.env.SECRET_USER, async (err, payload) => {
+        jwt.verify(token, process.env.SECRET_CUSTOMER, async (err, payload) => {
+
             if (err) {
                 res.json(err)
             } else {
 
                 res.send('DU är kund')
                 // vad som ska göras om man är kund
-
             }
         })
 
     } else {
-        res.send('Bara för inloggade')
+        res.send('Du måste var inloggad eller admin')
     }
 })
 
