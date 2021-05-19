@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const router = require('express').Router();
 const Product = require('../models/Product');
 
+//Post products
 router.post('/', (req, res) => {
   const newProduct = new Product({
     _id: new mongoose.Types.ObjectId(),
@@ -16,47 +17,32 @@ router.post('/', (req, res) => {
       console.error(err);
     } else {
       console.log('The new product has been saved');
-      res.json('The new product has been saved');
+      res.json(newProduct);
     }
   });
   console.log(req.body);
 });
 
+//Get all products
 router.get('/', async (req, res) => {
-  const allProducts = await Product.find({}).populate('product');
+  const getAllProducts = await Product.find({}); /* .populate('product'); */
 
-  res.json(allProducts);
+  res.json(getAllProducts);
 });
 
-/* 
-const products = [
-    {
-        _id: '39y7gbbZk1u4ABnv',
-        title: 'Gretas Fury',
-        price: 999,
-        shortDesc: 'Unisex',
-        longDesc: 'Skate ipsum dolor sit amet...',
-        imgFile: 'skateboard-greta.png'
-    },
-    {
-        _id: '39y7gbbZk1u4ABnv',
-        title: 'Skateboard',
-        price: 799,
-        shortDesc: 'Unisex',
-        longDesc: 'Skate ipsum dolor sit amet...',
-        imgFile: 'skateboard-generic.png'
-    }
-    {
-        _id: '39y7gbbZk1u4ABnv',
-        title: 'Wheel Rocket',
-        price: 200,
-        shortDesc: 'Unisex',
-        longDesc: 'Skate ipsum dolor sit amet...',
-        imgFile: 'skateboard-generic.png'
-    }
-]
-app.get('/api/products', (req, res) => {
-    res.json(products)
-}) */
+//Get by id
+router.get('/:id', async (req, res) => {
+  const productById = await Product.find({ _id: req.params.id });
+
+  res.json(productById);
+});
+
+//Delete product
+router.delete('/:id', async (req, res) => {
+  const removedProduct = await Product.findByIdAndDelete(req.params.id);
+  if (!removedProduct) return res.send('Product not  found');
+
+  res.send('Product has been deleted');
+});
 
 module.exports = router;
