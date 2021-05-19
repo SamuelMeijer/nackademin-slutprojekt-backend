@@ -30,3 +30,5 @@ router.get('/', async (req, res) => {
     console.log(products)
     res.json(products)
 })
+
+module.exports = router;

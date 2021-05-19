@@ -17,6 +17,7 @@ require('dotenv').config();
 //import routes
 const productRoute = require('./routes/productRoute');
 const userRoute = require('./routes/userRoute')
+const authRoute = require('./routes/authRoute')
 
 //middleware
 app.use(express.urlencoded({ extended: true }));
