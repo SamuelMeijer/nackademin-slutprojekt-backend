@@ -1,5 +1,5 @@
 // Lägga till produkter
-app.post('/', (req, res) => {
+router.post('/', (req, res) => {
 
     const newProduct = new Product({
         title: req.body.title,
@@ -20,7 +20,7 @@ app.post('/', (req, res) => {
 })
 
 // Visar alla produkter
-app.get('/', async (req, res) => {
+router.get('/', async (req, res) => {
     const products = await Product.find({}).populate('product')
     console.log(products)
     res.json(products)
