@@ -7,10 +7,10 @@ const cookieParser = require('cookie-parser');
 
 // bcrypt
 const bcrypt = require('bcrypt');
-const saltRounds = 10;
 
 // json web token
-const jwt = require('jsonwebtoken')
+const jwt = require('jsonwebtoken');
+const app = require('../app');
 
 
 router.post('/', async (req, res) => {
@@ -35,17 +35,29 @@ router.post('/', async (req, res) => {
             if (result !== false) {
 
                 const payload = {
+
                     // Utfärdat av
-                    iss: 'ecUtb',
+                    iss: 'sinus',
                     // Utgångsdatum - en timme i detta fall
                     exp: Math.floor(Date.now() / 1000) + (60 + 60),
-                    // Kanske senare?
+                    // Kanske senare????
                     uid: user._id
                 }
 
-                const token = jwt.sign(payload, process.env.SECRET)
-                res.cookie('auth-token', token)
-                res.send(`Hej ${user.name}! Du är nu i ${user.role}-läge`)
+                console.log(user.role)
+                if (user.role == 'admin') {
+                    const token = jwt.sign(payload, process.env.SECRET_ADMIN)
+                    res.cookie('auth-token-admin', token)
+                    res.send(`Hej ${user.name}! Du är nu i ${user.role}-läge`)
+                } else if (user.role == 'user') {
+                    const token = jwt.sign(payload, process.env.SECRET_USER)
+                    res.cookie('auth-token-user', token)
+                    res.send(`Hej ${user.name}! Du är nu i ${user.role}-läge`)
+                } else {
+                    res.send('Du har ej behörighet')
+                }
+
+
 
             } else {
                 res.send('Användarnamn eller lösenord stämmer ej!')
@@ -53,5 +65,47 @@ router.post('/', async (req, res) => {
         })
     }
 })
+
+
+
+// Bara test för auth
+router.get('/', async (req, res) => {
+    if (req.cookies['auth-token-admin']) {
+        const token =  req.cookies['auth-token-admin']
+
+        jwt.verify(token, process.env.SECRET_ADMIN, async (err, payload) => {
+            if (err) {
+                res.json(err)
+            } else {
+
+                res.send('Du är en admin')
+                // vad som ska göras om man är admin
+
+            }
+        })
+
+    } else if (req.cookies['auth-token-user']) {
+
+        const token = req.cookies['auth-token-user']
+
+        jwt.verify(token, process.env.SECRET_USER, async (err, payload) => {
+            if (err) {
+                res.json(err)
+            } else {
+
+                res.send('DU är kund')
+                // vad som ska göras om man är kund
+
+            }
+        })
+
+    } else {
+        res.send('Bara för inloggade')
+    }
+})
+
+
+
+
 
 module.exports = router;

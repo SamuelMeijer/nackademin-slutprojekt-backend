@@ -3,6 +3,9 @@ const router = require('express').Router();
 const User = require('../models/user');
 
 
+// Till senare
+// const Order = require('../models/order')
+
 // json web token
 const jwt = require('jsonwebtoken');
 // cookie parser
@@ -22,17 +25,22 @@ router.post('/', (req, res) => {
         } else {
             const newUser = new User({
 
+                _id: new mongoose.Schema.Types.ObjectId(),
                 email: req.body.email,
                 password: hash,
                 name: req.body.name,
-                role: 'customer', // or customer
-
+                role: req.body.role, // or customer
                 adress: {
                     street: req.body.street,
                     zip: req.body.zip,
                     city: req.body.city
                 },
-                orderHistory: []
+                //importera orders här
+                /* orderHistory: [{
+                    type: new mongoose.Schema.Types.ObjectId,
+                    ref: 'Order'
+                }
+                ] */
             })
 
             // Sparar användaren
