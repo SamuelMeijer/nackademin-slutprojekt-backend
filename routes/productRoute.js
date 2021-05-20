@@ -1,7 +1,10 @@
+///////////////////////////
+//* ERSÄTT MED TIMS KOD *//
+///////////////////////////
+
 const mongoose = require('mongoose');
 const router = require('express').Router();
 const Product = require('../models/product');
-
 
 // Lägga till produkter
 router.post('/', (req, res) => {
@@ -24,11 +27,34 @@ router.post('/', (req, res) => {
     })
 })
 
+
+
+// Testing authentication
+const jwtAuthentication = require('../middleware/jwtAuthentication')
+
+
+// cookie parser
+const cookieParser = require('cookie-parser');
+const User = require('../models/user');
+// Behövs för att kunna hämta req.cookies
+router.use(cookieParser())
+
+
 // Visar alla produkter
-router.get('/', async (req, res) => {
-    const products = await Product.find({}).populate('product')
-    console.log(products)
-    res.json(products)
+router.get('/', jwtAuthentication, async (req, res) => {
+
+    const user = await User.findOne({ email: req.body.email })
+
+    if (user.role == 'customer') {
+        const products = await Product.find({}).populate('product')
+        console.log(products)
+        res.json(products)
+    } else if (user.role == 'admin'){
+        res.send('Du är admin!')
+    } else {
+        res.send('Du måste vara inloggad kund för att se varorna')
+    }
+
 })
 
 module.exports = router;

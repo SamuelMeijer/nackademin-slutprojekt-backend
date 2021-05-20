@@ -53,4 +53,12 @@ router.post('/', (req, res) => {
 
 })
 
+
+// Hämtal alla användare
+router.get('/', async (req, res) => {
+    const users = await User.find({}).populate('user')
+    console.log(users)
+    res.json(users)
+})
+
 module.exports = router;
