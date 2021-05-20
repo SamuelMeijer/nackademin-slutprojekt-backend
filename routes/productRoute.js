@@ -47,7 +47,7 @@ router.get('/:id', async (req, res) => {
 });
 
 //Delete product
-router.delete('/:id', jwtAuthentication, async (req, res) => {
+router.delete('/:id',jwtAuthentication,  async (req, res) => {
   const removedProduct = await Product.findByIdAndDelete(req.params.id);
   if (!removedProduct) return res.send('Product not  found');
 
