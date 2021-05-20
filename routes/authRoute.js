@@ -66,7 +66,7 @@ router.post('/', async (req, res) => {
     }
 })
 
-
+/* ***** FLYTTAR TILL MIDDLEWARE *****
 // Bara test för auth
 router.get('/', (req, res) => {
 
@@ -106,7 +106,7 @@ router.get('/', (req, res) => {
         res.send('Du måste var inloggad eller admin')
     }
 })
-
+***** FLYTTAR TILL MIDDLEWARE ***** */
 
 
 
