@@ -5,6 +5,14 @@
 const mongoose = require('mongoose');
 const router = require('express').Router();
 const Product = require('../models/Product');
+const User = require('../models/User');
+
+const jwtAuthentication = require('../middleware/jwtAuthentication')
+// cookie parser
+const cookieParser = require('cookie-parser');
+// Behövs för att kunna hämta req.cookies
+router.use(cookieParser())
+
 
 // Lägga till produkter
 router.post('/', (req, res) => {
@@ -29,15 +37,6 @@ router.post('/', (req, res) => {
 
 
 
-// Testing authentication
-const jwtAuthentication = require('../middleware/jwtAuthentication')
-
-
-// cookie parser
-const cookieParser = require('cookie-parser');
-const User = require('../models/User');
-// Behövs för att kunna hämta req.cookies
-router.use(cookieParser())
 
 
 // Visar alla produkter
