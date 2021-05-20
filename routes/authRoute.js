@@ -84,6 +84,8 @@ router.post('/', async (req, res) => {
                 res.send('Användarnamn eller lösenord stämmer ej!')
             }
         })
+    } else {
+        res.send('Hittar inte')
     }
 })
 

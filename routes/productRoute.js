@@ -30,12 +30,14 @@ router.post('/', (req, res) => {
   //console.log(req.body);
 });
 
+/* TESTING AUTH
 //Get all products
 router.get('/', async (req, res) => {
-  const getAllProducts = await Product.find({}); /* .populate('product'); */
+  const getAllProducts = await Product.find({}); /-* .populate('product'); *-/
 
   res.json(getAllProducts);
 });
+*/
 
 //Get by id
 router.get('/:id', async (req, res) => {

@@ -33,11 +33,11 @@ router.post('/', (req, res) => {
                     city: req.body.city
                 },
                 //importera orders här
-                orderHistory: [{
-                    type: new mongoose.Schema.Types.ObjectId,
+                /* orderHistory: [{
+                    type: new mongoose.Types.ObjectId,
                     ref: 'Order'
                 }
-                ]
+                ] */
             })
 
             // Sparar användaren

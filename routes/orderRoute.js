@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const jwtAuthentication = require('../middleware/jwtAuthentication');
 const router = require('express').Router();
 
-const Order = require('../models/order')
+const Order = require('../models/Order')
 const Product = require('../models/Product');
 const User = require('../models/User');
 
