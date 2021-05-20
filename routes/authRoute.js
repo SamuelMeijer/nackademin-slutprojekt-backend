@@ -43,11 +43,16 @@ router.post('/', async (req, res) => {
                     // Utfärdat av
                     iss: 'sinus',
                     // Utgångsdatum - en timme i detta fall
-                    exp: Math.floor(Date.now() / 1000) + (60 + 60),
+                    // exp: Math.floor(Date.now() / 1000) + (60 + 60),
                     // Kanske senare?
                     uid: user._id
                 }
 
+                const token = jwt.sign(payload, process.env.SECRET_AUTH, { expiresIn: "15m" });
+                    res.cookie('auth-token', token)
+                    res.send(`Hej ${user.name}! Du är nu i ${user.role}-läge`)
+
+                /*
                 if (user.role == 'admin') {
                     const token = jwt.sign(payload, process.env.SECRET_ADMIN)
                     res.cookie('auth-token-admin', token)
@@ -59,11 +64,20 @@ router.post('/', async (req, res) => {
                 } else {
                     res.send('Du har ej behörighet')
                 }
+                */
             } else {
                 res.send('Användarnamn eller lösenord stämmer ej!')
             }
         })
     }
+})
+
+
+// Testing authentication
+const jwtAuthentication = require('../middleware/jwtAuthentication');
+
+router.get('/', jwtAuthentication, (req, res, next) => {
+    res.send('Hejhej')
 })
 
 /* ***** FLYTTAR TILL MIDDLEWARE *****
