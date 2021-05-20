@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const router = require('express').Router();
-const User = require('../models/user');
+const User = require('../models/User');
 
 
 // Till senare
@@ -33,11 +33,11 @@ router.post('/', (req, res) => {
                     city: req.body.city
                 },
                 //importera orders här
-                /* orderHistory: [{
+                orderHistory: [{
                     type: new mongoose.Schema.Types.ObjectId,
                     ref: 'Order'
                 }
-                ] */
+                ]
             })
 
             // Sparar användaren

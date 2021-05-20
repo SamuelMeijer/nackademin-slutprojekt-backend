@@ -4,7 +4,7 @@
 
 const mongoose = require('mongoose');
 const router = require('express').Router();
-const Product = require('../models/product');
+const Product = require('../models/Product');
 
 // Lägga till produkter
 router.post('/', (req, res) => {
@@ -35,7 +35,7 @@ const jwtAuthentication = require('../middleware/jwtAuthentication')
 
 // cookie parser
 const cookieParser = require('cookie-parser');
-const User = require('../models/user');
+const User = require('../models/User');
 // Behövs för att kunna hämta req.cookies
 router.use(cookieParser())
 
