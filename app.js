@@ -8,7 +8,6 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 //import routes
-// ERSÄTT MED TIMS KOD
 const productRoute = require('./routes/productRoute');
 const userRoute = require('./routes/userRoute')
 const authRoute = require('./routes/authRoute')
@@ -20,7 +19,6 @@ app.use(express.json());
 app.use(express.static('public'));
 
 //Routes
-// ERSÄTT MED TIMS KOD
 app.use('/api/products', productRoute);
 app.use('/api/register', userRoute)
 app.use('/api/auth', authRoute)
@@ -32,7 +30,7 @@ mongoose
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useFindAndModify: false,
-    dbName: 'sinusEmma',
+    dbName: 'sinustest'
   })
   .then(() => {
     console.log('Connected to db');
@@ -40,7 +38,5 @@ mongoose
   .catch((err) => {
     console.log(err);
   });
-
-
 
 module.exports = app;
