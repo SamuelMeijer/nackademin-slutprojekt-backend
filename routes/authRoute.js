@@ -5,12 +5,11 @@ const userRoute = require('../routes/userRoute')
 
 // cookie parser
 const cookieParser = require('cookie-parser');
-
 // Behövs för att kunna hämta req.cookies
 router.use(cookieParser())
 
 
-// bcrypt
+// bcrypt 
 const bcrypt = require('bcrypt');
 
 // json web token
@@ -71,6 +70,8 @@ router.post('/', async (req, res) => {
 // Bara test för auth
 router.get('/', (req, res) => {
 
+    // deletes the cookie chosen
+    // res.status(202).clearCookie('auth-token-customer').send('admin cookie is cleared')
 
     if (req.cookies['auth-token-admin']) {
 
@@ -96,7 +97,7 @@ router.get('/', (req, res) => {
                 res.json(err)
             } else {
 
-                res.send('DU är kund')
+                res.send('Du är kund')
                 // vad som ska göras om man är kund
             }
         })
