@@ -50,7 +50,20 @@ router.post('/', async (req, res) => {
 
                 const token = jwt.sign(payload, process.env.SECRET_AUTH, { expiresIn: "15m" });
                     res.cookie('auth-token', token)
-                    res.send(`Hej ${user.name}! Du är nu i ${user.role}-läge`)
+                    
+                    const responseBody = {
+                        token: token,
+                        user: {
+                            email: user.email,
+                            name: user.name,
+                            role: user.role,
+                            adress: user.adress
+                        }
+                    };
+                    
+                    
+                    res.send(responseBody);
+                    // res.send(`Hej ${user.name}! Du är nu i ${user.role}-läge`)
 
                 /*
                 if (user.role == 'admin') {
@@ -73,7 +86,7 @@ router.post('/', async (req, res) => {
 })
 
 
-// Testing authentication
+// ***** Testing authentication ******
 const jwtAuthentication = require('../middleware/jwtAuthentication');
 
 router.get('/', jwtAuthentication, (req, res, next) => {
