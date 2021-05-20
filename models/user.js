@@ -17,10 +17,10 @@ const userSchema = mongoose.Schema({
         city: { type: String, required: true }
     },
     // Hämta från order sen!
-    /* orderHistory: [{
+    orderHistory: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Order'
-    }] */
+    }]
 })
 
 const User = mongoose.model('User', userSchema);

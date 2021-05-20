@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const router = require('express').Router();
-const User = require('../models/user');
+const User = require('../models/User');
 const userRoute = require('../routes/userRoute')
 
 // cookie parser
@@ -27,7 +27,7 @@ router.post('/', async (req, res) => {
 
         // Kolla om lösenordet stämmer
         // Jämför första och andra parametern
-        // Ingen callback!!!
+        // Ingen callback här!!!
         bcrypt.compare(req.body.password, user.password, function (err, result) {
 
             // Vid fel
@@ -45,6 +45,7 @@ router.post('/', async (req, res) => {
                     // Utgångsdatum - en timme i detta fall
                     // exp: Math.floor(Date.now() / 1000) + (60 + 60),
                     // Kanske senare?
+                    // Lägger till användare hämtat från user._id
                     uid: user._id
                 }
 
@@ -78,12 +79,14 @@ router.post('/', async (req, res) => {
                     res.send('Du har ej behörighet')
                 }
                 */
+
             } else {
                 res.send('Användarnamn eller lösenord stämmer ej!')
             }
         })
     }
 })
+
 
 
 // ***** Testing authentication ******
@@ -114,27 +117,19 @@ router.get('/', (req, res) => {
             }
         })
 
-    } else if (req.cookies['auth-token-customer']) {
+// Testing authentication
+const jwtAuthentication = require('../middleware/jwtAuthentication');
 
-        const token = req.cookies['auth-token-customer']
-
-        jwt.verify(token, process.env.SECRET_CUSTOMER, async (err, payload) => {
-
-            if (err) {
-                res.json(err)
-            } else {
-
-                res.send('Du är kund')
-                // vad som ska göras om man är kund
-            }
-        })
-
-    } else {
-        res.send('Du måste var inloggad eller admin')
-    }
+router.get('/', jwtAuthentication, (req, res, next) => {
+    res.send('Hejhej')
 })
 ***** FLYTTAR TILL MIDDLEWARE ***** */
 
+// Loggar ut användare
+router.delete('/',  (req, res) => {
+    const user =  User.findOne({ email: req.body.email })
+    res.status(202).clearCookie('auth-token').send(`Du har loggat ut som ${user.role}`)
+})
 
 
 

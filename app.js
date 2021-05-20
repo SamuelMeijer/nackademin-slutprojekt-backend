@@ -8,9 +8,11 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 //import routes
+// ERSÄTT MED TIMS KOD
 const productRoute = require('./routes/productRoute');
 const userRoute = require('./routes/userRoute')
 const authRoute = require('./routes/authRoute')
+const orderRoute = require('./routes/orderRoute')
 
 //middleware
 app.use(express.urlencoded({ extended: true }));
@@ -18,9 +20,11 @@ app.use(express.json());
 app.use(express.static('public'));
 
 //Routes
+// ERSÄTT MED TIMS KOD
 app.use('/api/products', productRoute);
 app.use('/api/register', userRoute)
 app.use('/api/auth', authRoute)
+app.use('/api/orders', orderRoute)
 
 //Connect to DB
 mongoose
@@ -40,4 +44,3 @@ mongoose
 
 
 module.exports = app;
-

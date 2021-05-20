@@ -1,3 +1,7 @@
+///////////////////////////
+//* ERSÄTT MED TIMS KOD *//
+///////////////////////////
+
 const mongoose = require('mongoose');
 
 const productSchema = mongoose.Schema({
