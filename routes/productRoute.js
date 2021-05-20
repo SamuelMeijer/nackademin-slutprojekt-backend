@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const router = require('express').Router();
 const Product = require('../models/Product');
+//const verification = require('../verification');
 
 //Post products
 router.post('/', (req, res) => {
@@ -20,7 +21,7 @@ router.post('/', (req, res) => {
       res.json(newProduct);
     }
   });
-  console.log(req.body);
+  //console.log(req.body);
 });
 
 //Get all products
@@ -46,7 +47,7 @@ router.delete('/:id', async (req, res) => {
 });
 
 //Update product
-router.patch('/:id', async (req, res) => {
+/* router.patch('/:id', async (req, res) => {
   try {
     const productUpdate = await Product.findByIdAndUpdate(
       { _id: req.params.id },
@@ -57,6 +58,28 @@ router.patch('/:id', async (req, res) => {
   } catch (err) {
     res.json({ message: err });
   }
+}); */
+
+//Update product
+router.patch('/:id', async (req, res) => {
+  const productUpdate = await Product.findByIdAndUpdate(req.params.id, {
+    title: req.body.title,
+    price: req.body.price,
+    shortDesc: req.body.shortDesc,
+    category: req.body.category,
+    longDesc: req.body.longDesc,
+    imgFile: req.body.imgFile,
+  });
+  if (!productUpdate) return res.json('Something went wrong');
+
+  productUpdate.save((err) => {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log('Your product has ben updated');
+      res.json(productUpdate);
+    }
+  });
 });
 
 module.exports = router;
