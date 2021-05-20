@@ -49,11 +49,11 @@ router.post('/', async (req, res) => {
                 }
 
                 if (user.role == 'admin') {
-                    const token = jwt.sign(payload, process.env.SECRET_ADMIN)
+                    const token = jwt.sign(payload, process.env.SECRET_ADMIN/* , { expiresIn: '15m'} */)
                     res.cookie('auth-token-admin', token)
                     res.send(`Hej ${user.name}! Du är nu i ${user.role}-läge`)
                 } else if (user.role == 'customer') {
-                    const token = jwt.sign(payload, process.env.SECRET_CUSTOMER)
+                    const token = jwt.sign(payload, process.env.SECRET_CUSTOMER/* , { expiresIn: '15m'} */)
                     res.cookie('auth-token-customer', token)
                     res.send(`Hej ${user.name}! Du är nu i ${user.role}-läge`)
                 } else {
@@ -65,49 +65,6 @@ router.post('/', async (req, res) => {
         })
     }
 })
-
-
-// Bara test för auth
-router.get('/', (req, res) => {
-
-    // deletes the cookie chosen
-    // res.status(202).clearCookie('auth-token-customer').send('admin cookie is cleared')
-
-    if (req.cookies['auth-token-admin']) {
-
-        const token = req.cookies['auth-token-admin']
-
-        jwt.verify(token, process.env.SECRET_ADMIN, async (err, payload) => {
-
-            if (err) {
-                res.json(err)
-            } else {
-                res.send('Du är en admin')
-                // vad som ska göras om man är admin
-            }
-        })
-
-    } else if (req.cookies['auth-token-customer']) {
-
-        const token = req.cookies['auth-token-customer']
-
-        jwt.verify(token, process.env.SECRET_CUSTOMER, async (err, payload) => {
-
-            if (err) {
-                res.json(err)
-            } else {
-
-                res.send('Du är kund')
-                // vad som ska göras om man är kund
-            }
-        })
-
-    } else {
-        res.send('Du måste var inloggad eller admin')
-    }
-})
-
-
 
 
 
