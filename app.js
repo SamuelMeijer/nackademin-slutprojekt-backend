@@ -1,10 +1,17 @@
 const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
+
+// json web token
+const jwt = require('jsonwebtoken');
+
 require('dotenv').config();
 
 //import routes
 const productRoute = require('./routes/productRoute');
+const userRoute = require('./routes/userRoute')
+const authRoute = require('./routes/authRoute')
+const orderRoute = require('./routes/orderRoute')
 
 //middleware
 app.use(express.urlencoded({ extended: true }));
@@ -13,6 +20,9 @@ app.use(express.static('public'));
 
 //Routes
 app.use('/api/products', productRoute);
+app.use('/api/register', userRoute)
+app.use('/api/auth', authRoute)
+app.use('/api/orders', orderRoute)
 
 //Connect to DB
 mongoose
@@ -20,7 +30,7 @@ mongoose
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useFindAndModify: false,
-    dbName: 'timsinus',
+    dbName: 'sinustest'
   })
   .then(() => {
     console.log('Connected to db');
@@ -28,25 +38,5 @@ mongoose
   .catch((err) => {
     console.log(err);
   });
-
-/* app.post('/api/products', (req, res) => {
-  const newProduct = new Product({
-    _id: new mongoose.Types.ObjectId(),
-    title: req.body.title,
-    price: req.body.price,
-    shortDesc: req.body.shortDesc,
-    longDesc: req.body.longDesc,
-    imgFile: req.body.imgFile,
-  });
-  newProduct.save((err) => {
-    if (err) {
-      console.error(err);
-    } else {
-      console.log('The new product has been saved');
-      res.json('The new product has been saved');
-    }
-  });
-  console.log(req.body);
-}); */
 
 module.exports = app;
