@@ -4,7 +4,8 @@ module.exports = (req, res, next) => {
     // Evalutes if admin-auth
     if (req.cookies['auth-token']) {
 
-        const token = req.cookies['auth-token']
+        //const token = req.cookies['auth-token']
+        const token = req.cookies['auth-token']['token']
 
         jwt.verify(token, process.env.SECRET_AUTH, async (err, payload) => {
             if (err) {

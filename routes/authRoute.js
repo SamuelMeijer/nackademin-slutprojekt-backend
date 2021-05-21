@@ -49,8 +49,8 @@ router.post('/', async (req, res) => {
                     uid: user._id
                 }
 
-                const token = jwt.sign(payload, process.env.SECRET_AUTH, { expiresIn: "15m" });
-                    res.cookie('auth-token', token)
+                const token = jwt.sign(payload, process.env.SECRET_AUTH, { expiresIn: "1h" });
+                    
                     
                     const responseBody = {
                         token: token,
@@ -62,7 +62,7 @@ router.post('/', async (req, res) => {
                         }
                     };
                     
-                    
+                    res.cookie('auth-token', responseBody)
                     res.send(responseBody);
                     // res.send(`Hej ${user.name}! Du är nu i ${user.role}-läge`)
 
@@ -129,8 +129,8 @@ router.get('/', jwtAuthentication, (req, res, next) => {
 
 // Loggar ut användare
 router.delete('/',  (req, res) => {
-    const user =  User.findOne({ email: req.body.email })
-    res.status(202).clearCookie('auth-token').send(`Du har loggat ut som ${user.role}`)
+    //const user =  User.findOne({ email: req.body.email })
+    res.status(202).clearCookie('auth-token').send(`Du har loggat ut!`)
 })
 
 
