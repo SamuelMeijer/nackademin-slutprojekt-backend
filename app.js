@@ -5,6 +5,7 @@ require('dotenv').config();
 
 //import routes
 const productRoute = require('./routes/productRoute');
+const orderRoute = require('./routes/orderRoute');
 
 //middleware
 app.use(express.urlencoded({ extended: true }));
@@ -13,14 +14,14 @@ app.use(express.static('public'));
 
 //Routes
 app.use('/api/products', productRoute);
-
+app.use('/api/orders', orderRoute);
 //Connect to DB
 mongoose
   .connect(process.env.DB_CONNECT, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useFindAndModify: false,
-    dbName: 'timsinus',
+    dbName: 'sinustest',
   })
   .then(() => {
     console.log('Connected to db');
