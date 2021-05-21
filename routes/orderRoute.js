@@ -16,19 +16,18 @@ router.use(cookieParser())
 
 
 // Lägga till produkter
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
+
 
     const newOrder = new Order({
 
-        _id: 123,
+        _id: new mongoose.Types.ObjectId(),
         timeStamp: Date.now(),
         status: true,
-        items: [{
-            type: new mongoose.Schema.Types.ObjectId,
-            ref: 'Product'
-        }],
-        orderValue: Number // Skriva formel här
+        items: req.body.items,
+        //orderValue: Number // Skriva formel här
     })
+
 
     // Sparar användaren
     newOrder.save((err) => {
@@ -38,9 +37,18 @@ router.post('/', (req, res) => {
             res.json(newOrder)
         }
     })
+
+    const user = await User.findOne({ email: req.cookies['auth-token']["user"]["email"] })
+
+    user.orderHistory.push(newOrder._id)
+
+    const userUpdate = await User.findByIdAndUpdate(user._id, user);
+
+    console.log(user.orderHistory)
+
 })
 
-
+/* 
 router.get('/', jwtAuthentication, async (req, res) => {
 
     const user =  User.findOne({ email: req.body.email })
@@ -54,6 +62,6 @@ router.get('/', jwtAuthentication, async (req, res) => {
     } else {
         res.send('Du måste vara inloggad för at kunna se')
     }
-})
+}) */
 
 module.exports = router;

@@ -10,11 +10,8 @@ const orderSchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
     timeStamp: Date,
     status: Boolean,
-    items: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Product'
-    }],
-    orderValue: Number
+    items: [String]
+    //orderValue: Number
 })
 
 const Order = mongoose.model('Order', orderSchema);

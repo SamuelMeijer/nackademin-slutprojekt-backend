@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 // Till senare
-// const Order = require('../models/order')
+const Order = require('./Order')
 
 const userSchema = mongoose.Schema({
 
@@ -16,7 +16,7 @@ const userSchema = mongoose.Schema({
         zip: { type: Number, required: true },
         city: { type: String, required: true }
     },
-    // Hämta från order sen!
+
     orderHistory: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Order'

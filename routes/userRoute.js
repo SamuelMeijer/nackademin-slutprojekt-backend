@@ -4,7 +4,8 @@ const User = require('../models/User');
 
 
 // Till senare
-// const Order = require('../models/order')
+const Order = require('../models/Order')
+
 
 // json web token
 const jwt = require('jsonwebtoken');
@@ -28,16 +29,16 @@ router.post('/', (req, res) => {
                 // automatiskt att customer ska skrivas in, fråga Hans...
                 role: 'customer', 
                 adress: {
-                    street: req.body.street,
-                    zip: req.body.zip,
-                    city: req.body.city
+                    street: req.body.adress.street,
+                    zip: req.body.adress.zip,
+                    city: req.body.adress.city
                 },
                 //importera orders här
-                /* orderHistory: [{
+                orderHistory: [{
                     type: new mongoose.Types.ObjectId,
                     ref: 'Order'
                 }
-                ] */
+                ]
             })
 
             // Sparar användaren
