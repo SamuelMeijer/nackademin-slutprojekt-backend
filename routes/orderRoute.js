@@ -23,8 +23,20 @@ router.post('/', (req, res) =>{
   
 newOrder.save((err) => {
     if(err) {
-        console.error(err); 
+        return res.json({
+            sucess: {
+                status: '' , 
+                msg: ' Some th'
+            }
+        })
             }else{
+                // return res.json({
+                //     sucess:{
+                //         status:200, 
+                //         msg:' Order has added'
+                //     }
+
+                // })
                 console.log('Create an Order')
                 res.json(newOrder)
             }
