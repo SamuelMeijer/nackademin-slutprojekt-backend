@@ -25,26 +25,39 @@ router.post('/', async (req, res) => {
         timeStamp: Date.now(),
         status: true,
         items: req.body.items,
-        //orderValue: Number // Skriva formel här
+        orderValue: 1,
     })
 
+   
 
-    // Sparar användaren
+  
+    // Sparar den nya ordern till databasen
     newOrder.save((err) => {
         if (err) {
             res.json(err)
         } else {
+            // Skickar ett json.response innehållandes newOrder
             res.json(newOrder)
         }
     })
 
+
+
     const user = await User.findOne({ email: req.cookies['auth-token']["user"]["email"] })
 
     user.orderHistory.push(newOrder._id)
+   
 
     const userUpdate = await User.findByIdAndUpdate(user._id, user);
+    // console.log(user.orderHistory)
+ 
 
-    console.log(user.orderHistory)
+    console.log('Ny order', newOrder)
+
+    
+
+
+
 
 })
 

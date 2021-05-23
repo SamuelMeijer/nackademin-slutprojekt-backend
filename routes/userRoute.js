@@ -16,6 +16,9 @@ const saltRounds = 10;
 
 // For customers
 router.post('/', (req, res) => {
+
+    if(req.body.email)
+    // Kolla om email redan existerar
     bcrypt.hash(req.body.password, saltRounds, (err, hash) => {
         if (err) {
             res.json(err)
@@ -29,16 +32,16 @@ router.post('/', (req, res) => {
                 // automatiskt att customer ska skrivas in, fråga Hans...
                 role: 'customer', 
                 adress: {
-                    street: req.body.adress.street,
-                    zip: req.body.adress.zip,
-                    city: req.body.adress.city
+                    street: req.body.street,
+                    zip: req.body.zip,
+                    city: req.body.city
                 },
                 //importera orders här
-                orderHistory: [{
+/*                 orderHistory: [{
                     type: new mongoose.Types.ObjectId,
                     ref: 'Order'
                 }
-                ]
+                ] */
             })
 
             // Sparar användaren
