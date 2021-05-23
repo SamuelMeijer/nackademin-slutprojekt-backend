@@ -3,45 +3,50 @@ const router = require('express').Router();
 const Product = require('../models/Product');
 const User = require('../models/User');
 
-const jwtAuthentication = require('../middleware/jwtAuthentication')
+//Import authentication file
+const jwtAuthentication = require('../middleware/jwtAuthentication');
+
 // cookie parser
+
 const cookieParser = require('cookie-parser');
-// Behövs för att kunna hämta req.cookies
-router.use(cookieParser())
+// Required to use req.cookies as middleware
+router.use(cookieParser());
 
-//Post products
-router.post('/', jwtAuthentication, async (req, res) => {
-  const user = await User.findOne({ email: req.cookies['auth-token']["user"]["email"] })
-  if(user.role=='admin'){  const newProduct = new Product({
-    _id: new mongoose.Types.ObjectId(),
-    title: req.body.title,
-    price: req.body.price,
-    shortDesc: req.body.shortDesc,
-    longDesc: req.body.longDesc,
-    imgFile: req.body.imgFile,
-  });
-  newProduct.save((err) => {
-    if (err) {
-      console.error(err);
-    } else {
-      console.log('The new product has been saved');
-      res.json(newProduct);
-    }
-  })}else{
-    res.send('Ingen behörighet')
-  }
-
-  //console.log(req.body);
-});
-
-/* TESTING AUTH
-//Get all products
+//Return list of all products.
 router.get('/', async (req, res) => {
-  const getAllProducts = await Product.find({}); /-* .populate('product'); *-/
-
-  res.json(getAllProducts);
+  const allProducts = await Product.find({});
+  res.json(allProducts);
 });
-*/
+
+//Post products. Post new products, access (with jwtAuthentication) for admin only.
+router.post('/', jwtAuthentication, async (req, res) => {
+  // Find and save user
+  const user = await User.findOne({
+    email: req.cookies['auth-token']['user']['email'],
+  });
+  // Check if user has the role of admin
+  if (user.role == 'admin') {
+    // If admin then post new product
+    const newProduct = new Product({
+      _id: new mongoose.Types.ObjectId(),
+      title: req.body.title,
+      price: req.body.price,
+      shortDesc: req.body.shortDesc,
+      longDesc: req.body.longDesc,
+      imgFile: req.body.imgFile,
+    });
+    newProduct.save((err) => {
+      if (err) {
+        console.error(err);
+      } else {
+        console.log('The new product has been saved');
+        res.json(newProduct);
+      }
+    });
+  } else {
+    res.send('No authorization');
+  }
+});
 
 //Get by id
 router.get('/:id', async (req, res) => {
@@ -51,81 +56,54 @@ router.get('/:id', async (req, res) => {
 });
 
 //Delete product
-router.delete('/:id',jwtAuthentication,  async (req, res) => {
+router.delete('/:id', jwtAuthentication, async (req, res) => {
   const removedProduct = await Product.findByIdAndDelete(req.params.id);
   if (!removedProduct) return res.send('Product not  found');
 
   res.send('Product has been deleted');
 });
 
-//Update product
-/* router.patch('/:id', async (req, res) => {
-  try {
+// Patch for uppdating products, admin access only.
+router.patch('/:id', jwtAuthentication, async (req, res) => {
+  //Find and save user
+  const user = await User.findOne({
+    email: req.cookies['auth-token']['user']['email'],
+  });
+  //If admin, allow to update
+  if (user.role == 'admin') {
+    //To be able to update without filling in all fields
+    //find and save current product in currentProduct
+    const currentProduct = await Product.findById(req.params.id);
+    //Find product by id and uppdate it to productUpdate
+    //If a field is not filled, then use value from currentProduct
     const productUpdate = await Product.findByIdAndUpdate(
-      { _id: req.params.id },
-      { $set: { title: req.body.title }, $set: { price: req.body.price } }
+      req.params.id,
+      {
+        title: req.body.title || currentProduct.title,
+        price: req.body.price || currentProduct.price,
+        shortDesc: req.body.shortDesc || currentProduct.shortDesc,
+        longDesc: req.body.longDesc || currentProduct.longDesc,
+        imgFile: req.body.imgFile || currentProduct.imgFile,
+      },
+      //new: true is a parameter that will show the updated object.
+      { new: true }
     );
 
-    res.json(productUpdate);
-  } catch (err) {
-    res.json({ message: err });
+    if (!productUpdate) return res.json('No product found');
+
+    productUpdate.save((err) => {
+      if (err) {
+        res.json({ msg: err });
+      } else {
+        console.log('Your product has ben updated');
+        res.json(productUpdate);
+      }
+    });
+  } else {
+    res.send('No authorization');
   }
-}); */
 
-//Update product
-router.patch('/:id', jwtAuthentication, async (req, res) => {
-  const user = await User.findOne({ email: req.cookies['auth-token']["user"]["email"] })
-if(user.role=='admin'){
-  const newProduct = {
-    title: req.body.title,
-    price: req.body.price,
-    shortDesc: req.body.shortDesc,
-    category: req.body.category,
-    longDesc: req.body.longDesc,
-    imgFile: req.body.imgFile,
-  }
-  const productUpdate = await Product.findByIdAndUpdate(req.params.id, newProduct);
-  if (!productUpdate) return res.json('Something went wrong');
-
-  productUpdate.save((err) => {
-    if (err) {
-      console.log(err);
-    } else {
-      console.log('Your product has ben updated');
-      res.json(newProduct);
-    }
-  });
-}else{
-  res.send("Ingen behörighet")
-}
-
-console.log(req.cookies['auth-token']["user"]);
-//res.send('hejhå')
-
+  //console.log(req.cookies['auth-token']['user']);
 });
-
-// ***** FRÅN EMMA-TEST ******
-// Visar alla produkter
-/* router.get('/', jwtAuthentication, async (req, res) => {
-
-    const user = await User.findOne({ email: req.body.email })
-
-    if (user.role == 'customer') {
-        const products = await Product.find({}).populate('product')
-        console.log(products)
-        //res.json(products)
-    } else if (user.role == 'admin'){
-        res.send('Du är admin!')
-    } else {
-        res.send('Du måste vara inloggad kund för att se varorna')
-    }
-
-}) */
-
-
-router.get('/', async (req, res) => {
-  const allProducts = await Product.find({})
-  res.json(allProducts)
-})
 
 module.exports = router;
