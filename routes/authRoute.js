@@ -3,18 +3,17 @@ const router = require('express').Router();
 const User = require('../models/User');
 const userRoute = require('../routes/userRoute')
 
-// cookie parser
+// cookie parser - module?
 const cookieParser = require('cookie-parser');
 // Behövs för att kunna hämta req.cookies
+// Skapar middleware?
 router.use(cookieParser())
 
-
-// bcrypt 
+// bcrypt middleware/module?
 const bcrypt = require('bcrypt');
 
-// json web token
+// json web token middleware/module?
 const jwt = require('jsonwebtoken');
-const app = require('../app');
 
 
 router.post('/', async (req, res) => {
@@ -36,6 +35,7 @@ router.post('/', async (req, res) => {
             }
 
             // Om lösenorden matchar (result !== false, resultatet är inte falskt, eeh?)
+            // KOLLA DETTA IMORGON MED SAMUEL!!! :D
             if (result !== false) {
 
                 const payload = {
@@ -51,6 +51,7 @@ router.post('/', async (req, res) => {
 
                 const token = jwt.sign(payload, process.env.SECRET_AUTH, { expiresIn: "1h" });
                     
+                // User-information syns i jwt.io, ok?
                     
                     const responseBody = {
                         token: token,
@@ -64,8 +65,8 @@ router.post('/', async (req, res) => {
                     
                     res.cookie('auth-token', responseBody)
                     res.send(responseBody);
-                    // res.send(`Hej ${user.name}! Du är nu i ${user.role}-läge`)
-
+                    // res.json istället?
+                  
                 /*
                 if (user.role == 'admin') {
                     const token = jwt.sign(payload, process.env.SECRET_ADMIN)
@@ -85,7 +86,7 @@ router.post('/', async (req, res) => {
             }
         })
     } else {
-        res.send('Hittar inte')
+        res.send('Hittar ej användare')
     }
 })
 
