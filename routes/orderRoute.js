@@ -2,50 +2,53 @@ const express= require('express');
 const router= express.Router(); 
 const mongoose = require('mongoose'); 
 const app = require('../app');
+const jwt= require('jsonwebtoken')
 
 const Order = require('../models/Order');
-
+const User= require('../models/User')
 const Product= require('../models/Product')
 
 
+const cookieParser = require('cookie-parser');
+router.use(cookieParser())
 
 
  // Post request 
-router.post('/', (req, res) =>{
-    const newOrder = new Order({
+router.post('/', async(req, res) =>{
+    const user= await User.findOne({email: req.body.email })
+    // .populate('items')
+        
+    const newOrder = await new Order({
         _id: new mongoose.Types.ObjectId(), 
         timeStamp : Date.now(), 
         status: true, 
         orderValue: req.body.orderValue, 
-        items: req.body.items     
+        // orderValue: Number,
+        items: req.body.items, 
+      
+         })
+         
+    if(user){
+        user.orderHistory.push(newOrder._id); 
      
-     })
-  
+    }
+    console.log(req.body)
+
+         // Save Order
 newOrder.save((err) => {
     if(err) {
-        console.error(err); 
+        return res.status(417).send('Expectation Failed! ')
             }else{
                 console.log('Create an Order')
                 res.json(newOrder)
             }
 })
-console.log(req.body)
+
 })
 
-
-///// 
-// router.post ('/', (req, res) =>{
-//     const order = Order.findById
-//     order.item.push(req.body.Product)
-//     order.save()
-//     res.json(order.item)
-
-// })
-// C
-
-
+// Calculating cart
 // router.get('/', async (req, res ) =>{
-//     const cart = await Product. findById().populate('items'); 
+//     const cart = await Product. findById(req.params.id).populate('items'); 
     
 //     let total= Product.items.reduce((accumulator, current) => {
 //         return accumulator + current.orderValue
@@ -53,10 +56,24 @@ console.log(req.body)
 //     res.json(cart, total)
 
 // } )
-    
+
+
+    // putting Items in the cart
     router.get  ('/', async (req, res) =>{
-        const cart = await Order.find({})
-        res.json(cart)
+        const user= await User.findOne({
+            email: req.cookies['auth-token']['user']['email'],
+        })
+        if( user.role == 'admin'){
+        const orderHistory = await Order.find({})
+        res.json(orderHistory)
+        }
+        else if(user.role == 'customer'){
+            const orderHistory = await Order.find({})
+            res.json(orderHistory)
+        }
+        else {
+        return res.status(401).send('Unauthorized ')}
+    
     })
     
     

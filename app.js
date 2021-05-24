@@ -5,7 +5,9 @@ require('dotenv').config();
 
 //import routes
 const productRoute = require('./routes/productRoute');
-const orderRoute = require('./routes/orderRoute');
+const orderRoute = require('./routes/orderRoute')
+const authRoute = require('./routes/authRoute')
+
 
 //middleware
 app.use(express.urlencoded({ extended: true }));
@@ -15,6 +17,8 @@ app.use(express.static('public'));
 //Routes
 app.use('/api/products', productRoute);
 app.use('/api/orders', orderRoute);
+app.use('/api/auth', authRoute)
+
 //Connect to DB
 mongoose
   .connect(process.env.DB_CONNECT, {

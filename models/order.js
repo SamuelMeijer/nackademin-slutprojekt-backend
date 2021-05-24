@@ -4,10 +4,9 @@ const orderSchema = mongoose.Schema({
   _id: mongoose.Schema.Types.ObjectId,
   timeStamp: Date, 
   status : Boolean,
-  items: { type: mongoose.Schema.Types.ObjectId, 
-    ref: 'Product',  required: true}, 
+  items:[String], 
   orderValue: Number
-     
-  }); 
+  
+    }); 
 
 module.exports = mongoose.model('Order', orderSchema);
