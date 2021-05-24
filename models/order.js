@@ -10,7 +10,10 @@ const orderSchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
     timeStamp: Date,
     status: Boolean,
-    items: [String],
+    items: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Product'
+    }],
     orderValue: Number,
 })
 

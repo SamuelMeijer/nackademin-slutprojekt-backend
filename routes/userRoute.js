@@ -10,13 +10,13 @@ const Order = require('../models/Order');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
-// For customers
+// Route for register a new customer
 router.post('/', async (req, res) => {
 
+    // Checks in the User-model if the email inserted aldready exists
     const checkEmail = await User.exists({ email: req.body.email })
     
-    // const order = await Order.find({}).populate('orders')
-
+    // Encrypts the 
     bcrypt.hash(req.body.password, saltRounds, (err, hash) => {
 
         if (err) {
@@ -37,10 +37,8 @@ router.post('/', async (req, res) => {
                     zip: req.body.zip,
                     city: req.body.city
                 },
-                orderHistory: []//order._id
+                orderHistory: []
             })
-
-            console.log('längd', orderHistory.length())
 
             if (checkEmail) {
 

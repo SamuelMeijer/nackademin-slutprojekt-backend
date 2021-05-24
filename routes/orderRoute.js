@@ -11,6 +11,7 @@ router.use(cookieParser())
 // Importing models
 const Order = require('../models/Order')
 const User = require('../models/User');
+const Product = require('../models/Product')
 
 
 
@@ -19,15 +20,24 @@ const User = require('../models/User');
 // Adding products
 router.post('/',  async (req, res) => {
 
+
+    // HAR FASTNAT HÄR :D
+/* const product = await Product.findById( {_id: '60aa75772c85599b20d719e8'})
+    
+    
+    let calcOrderValeu = product.price.reduce((accumulator, current) => {
+        return accumulator + current.price
+    }, 0) */
+ 
     const newOrder = new Order({
 
         _id: new mongoose.Types.ObjectId(),
         timeStamp: Date.now(),
         status: true,
         items: req.body.items,
-        orderValue: 1,
+        orderValue: 10, 
+        // orderValue: calcOrderValue istället
     })
-
 
     // Sparar den nya ordern till databasen
     newOrder.save((err) => {
@@ -47,7 +57,6 @@ router.post('/',  async (req, res) => {
 
     await User.findByIdAndUpdate(user._id, user);
 
-    // console.log('userUpdate rad 50', userUpdate)
 
 })
 
@@ -55,16 +64,18 @@ router.post('/',  async (req, res) => {
 
 router.get('/', jwtAuthentication, async (req, res) => {
 
-    const user = await  User.findOne({ email: req.cookies['auth-token']["user"]["email"]}, {orderHistory: 1}).populate('orderHistory')
+    const user = await  User.findOne({ email: req.cookies['auth-token']["user"]["email"]})
   // const user = await  User.findOne({ email: payload.uid.email}, {orderHistory: 1}).populate('orderHistory')
+    console.log(user.role)
 
     if (user.role == 'customer') {
 
+        const userOrders = await  User.findOne({ email: req.cookies['auth-token']["user"]["email"]}, {orderHistory: 1}).populate('orderHistory')
     //const userOrderHistory = user.populate('orderHistory')
 
-        console.log(user.orderHistory)
+        console.log(userOrders.orderHistory)
 
-        res.json(user)
+        res.json(userOrders.orderHistory)
        /*  const userOrderHistory = []
 
     user.orderHistory.forEach( async orderId => {
@@ -85,8 +96,10 @@ res.json(userOrderHistory)
         // res.json(orderHistory)
 
     } else if (user.role == 'admin'){
-        const orders =  Order.find({})
-        res.json(orders)
+        
+        const adminOrders = await  Order.find({})
+
+        res.json(adminOrders)
 
     } else {
         res.send('Du måste vara inloggad för at kunna se')
