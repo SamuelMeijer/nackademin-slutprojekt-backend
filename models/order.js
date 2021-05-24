@@ -31,8 +31,8 @@ module.exports = Order
     return accumulator + current.price
 }, 0) */
 
-
 /* 
+// 
 app.get('/tray', (req, res) => {
     if (!req.cookies['auth-token']) {
         res.send("Bara för inloggade.")
@@ -57,6 +57,5 @@ app.get('/tray', (req, res) => {
         })
     }
 
-})
+}) */
 
- */

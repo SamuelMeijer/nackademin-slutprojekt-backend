@@ -15,7 +15,7 @@ router.post('/', async (req, res) => {
 
     const checkEmail = await User.exists({ email: req.body.email })
     
-    const order = await Order.find({}).populate('orders')
+    // const order = await Order.find({}).populate('orders')
 
     bcrypt.hash(req.body.password, saltRounds, (err, hash) => {
 
@@ -37,7 +37,7 @@ router.post('/', async (req, res) => {
                     zip: req.body.zip,
                     city: req.body.city
                 },
-                orderHistory: order._id
+                orderHistory: []//order._id
             })
 
             console.log('längd', orderHistory.length())

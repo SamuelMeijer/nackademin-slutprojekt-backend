@@ -18,7 +18,7 @@ const userSchema = mongoose.Schema({
     },
    orderHistory: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Product'
+    ref: 'Order'
 }],
 })
 

@@ -55,16 +55,16 @@ router.post('/',  async (req, res) => {
 
 router.get('/', jwtAuthentication, async (req, res) => {
 
-    const user = await  User.findOne({ email: req.cookies['auth-token']["user"]["email"]})
-   // const user = await  User.findOne({ email: payload.uid.email})
+    const user = await  User.findOne({ email: req.cookies['auth-token']["user"]["email"]}, {orderHistory: 1}).populate('orderHistory')
+  // const user = await  User.findOne({ email: payload.uid.email}, {orderHistory: 1}).populate('orderHistory')
 
     if (user.role == 'customer') {
 
-    const userOrderHistory = user.populate('orderHistory')
+    //const userOrderHistory = user.populate('orderHistory')
 
-        console.log(userOrderHistory)
+        console.log(user.orderHistory)
 
-        res.send('hej')
+        res.json(user)
        /*  const userOrderHistory = []
 
     user.orderHistory.forEach( async orderId => {
