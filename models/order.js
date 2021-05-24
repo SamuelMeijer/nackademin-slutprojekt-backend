@@ -11,7 +11,7 @@ const orderSchema = mongoose.Schema({
     timeStamp: Date,
     status: Boolean,
     items: [String],
-    orderValue: Number
+    orderValue: Number,
 })
 
 const Order = mongoose.model('Order', orderSchema);
@@ -32,3 +32,31 @@ module.exports = Order
 }, 0) */
 
 
+/* 
+app.get('/tray', (req, res) => {
+    if (!req.cookies['auth-token']) {
+        res.send("Bara för inloggade.")
+    } else {
+        const token = req.cookies['auth-token']
+        jwt.verify(token, process.env.SECRET, async(err, payload) => {
+            if (err) {
+                res.json(err)
+            } else {
+                // Hämta data - även om maten och dess priser.
+                const user = await User.findById(payload.uid).populate('tray')
+
+                // Använd js inbyggda reduce-funktion för att summera priserna.
+                let total = user.tray.reduce((accumulator, current) => {
+                    return accumulator + current.price
+                }, 0)
+
+                // Skicka både user-documentet och total som respons. 
+                res.json({ user, total })
+
+            }
+        })
+    }
+
+})
+
+ */

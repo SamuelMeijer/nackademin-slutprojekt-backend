@@ -3,21 +3,21 @@ const mongoose = require('mongoose');
 const jwtAuthentication = require('../middleware/jwtAuthentication');
 const router = require('express').Router();
 
-const Order = require('../models/Order')
-const Product = require('../models/Product');
-const User = require('../models/User');
-
 // cookie parser
 const cookieParser = require('cookie-parser');
 // Behövs för att kunna hämta req.cookies
 router.use(cookieParser())
 
+// Importing models
+const Order = require('../models/Order')
+const User = require('../models/User');
 
 
 
-// Lägga till produkter
-router.post('/', async (req, res) => {
 
+
+// Adding products
+router.post('/',  async (req, res) => {
 
     const newOrder = new Order({
 
@@ -28,53 +28,69 @@ router.post('/', async (req, res) => {
         orderValue: 1,
     })
 
-   
 
-  
     // Sparar den nya ordern till databasen
     newOrder.save((err) => {
         if (err) {
             res.json(err)
         } else {
+
             // Skickar ett json.response innehållandes newOrder
             res.json(newOrder)
         }
     })
 
 
-
-    const user = await User.findOne({ email: req.cookies['auth-token']["user"]["email"] })
+    const user =  await User.findOne({ email: req.cookies['auth-token']["user"]["email"] })
 
     user.orderHistory.push(newOrder._id)
-   
 
-    const userUpdate = await User.findByIdAndUpdate(user._id, user);
-    // console.log(user.orderHistory)
- 
+    await User.findByIdAndUpdate(user._id, user);
 
-    console.log('Ny order', newOrder)
-
-    
-
-
-
+    // console.log('userUpdate rad 50', userUpdate)
 
 })
 
-/* 
+
+
 router.get('/', jwtAuthentication, async (req, res) => {
 
-    const user =  User.findOne({ email: req.body.email })
+    const user = await  User.findOne({ email: req.cookies['auth-token']["user"]["email"]})
+   // const user = await  User.findOne({ email: payload.uid.email})
 
     if (user.role == 'customer') {
-        const orders =  Order.find({})
-        res.json(orders)
+
+    const userOrderHistory = user.populate('orderHistory')
+
+        console.log(userOrderHistory)
+
+        res.send('hej')
+       /*  const userOrderHistory = []
+
+    user.orderHistory.forEach( async orderId => {
+    const order = await Order.findById(orderId).populate('order')
+    // const order = await Product.findById(req.params.id)
+    
+    userOrderHistory.push(order)
+    })
+ 
+  console.log(order)
+
+
+console.log('från rad 75',userOrderHistory)
+res.json(userOrderHistory)
+
+*/
+
+        // res.json(orderHistory)
+
     } else if (user.role == 'admin'){
         const orders =  Order.find({})
-        res.json(user.orderHistory)
+        res.json(orders)
+
     } else {
         res.send('Du måste vara inloggad för at kunna se')
     }
-}) */
+})
 
 module.exports = router;
