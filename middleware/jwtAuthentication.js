@@ -34,6 +34,6 @@ module.exports = (req, res, next) => {
         */
     // If none of the cookies can be found
     } else {
-        res.send('Du måste var inloggad eller admin')
+        res.status(401).send({msg: 'Du måste var inloggad eller admin'})
     };
 }
