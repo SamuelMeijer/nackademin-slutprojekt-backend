@@ -1,21 +1,20 @@
 const jwt = require('jsonwebtoken');
 
 module.exports = (req, res, next) => {
-    // Evalutes if admin-auth
-    if (req.cookies['auth-token']) {
+  // Evalutes if admin-auth
+  if (req.cookies['auth-token']) {
+    //const token = req.cookies['auth-token']
+    const token = req.cookies['auth-token']['token'];
 
-        //const token = req.cookies['auth-token']
-        const token = req.cookies['auth-token']['token']
-
-        jwt.verify(token, process.env.SECRET_AUTH, async (err, payload) => {
-            if (err) {
-                res.json(err);
-            } else {
-                next();
-                //res.send('Du är en admin')
-                // vad som ska göras om man är admin
-            };
-        });
+    jwt.verify(token, process.env.SECRET_AUTH, async (err, payload) => {
+      if (err) {
+        res.json(err);
+      } else {
+        next();
+        //res.send('Du är en admin')
+        // vad som ska göras om man är admin
+      }
+    });
 
     // Evalutes if customer-auth
     /*  } else if (req.cookies['auth-token-customer']) {
@@ -33,7 +32,7 @@ module.exports = (req, res, next) => {
         });
         */
     // If none of the cookies can be found
-    } else {
-        res.send('Du måste var inloggad eller admin')
-    };
-}
+  } else {
+    res.status(401).send('Du måste var inloggad eller admin');
+  }
+};
