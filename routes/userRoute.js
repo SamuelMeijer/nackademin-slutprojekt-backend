@@ -16,6 +16,7 @@ router.post('/', async (req, res) => {
 
     // Checks in User-document if the email inserted aldready exists in the database
     const checkEmail = await User.exists({ email: req.body.email })
+    
     console.log(checkEmail)
 
     // If boolean 'checkEmail' is true (if email inserted already exists in database)
@@ -25,7 +26,6 @@ router.post('/', async (req, res) => {
         bcrypt.hash(req.body.password, saltRounds, (err, hash) => {
 
             if (err) {
-
                 res.json(err)
             } else {
 
@@ -44,11 +44,11 @@ router.post('/', async (req, res) => {
 
                     // Sets 'customer' as default value to role
                     // req.body.role can change the role to admin från insomnia/postman
-                    role: req.body.role,
+                    role: 'customer',
                     adress: {
-                        street: req.body.street,
-                        zip: req.body.zip,
-                        city: req.body.city
+                        street: req.body.adress.street,
+                        zip: req.body.adress.zip,
+                        city: req.body.adress.city
                     },
                     // Sets the orderHistory to an empty array
                     orderHistory: []
@@ -61,7 +61,7 @@ router.post('/', async (req, res) => {
                     if (err) {
                         res.json(err)
                     } else {
-                        res.json(newUser)
+                        res.status(201).json(newUser)
                     }
                 })
 
@@ -70,7 +70,7 @@ router.post('/', async (req, res) => {
         })
     } else {
 
-        res.status(409).send({ msg: `The email is already registered` })
+        res.send({ msg: `The email is already registered` })
     }
 
 
