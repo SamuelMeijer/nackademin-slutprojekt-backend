@@ -6,15 +6,22 @@ const User = require('../models/User')
 const Product = require('../models/Product')
 const jwtAuthentication = require('../middleware/jwtAuthentication');
 
+
+
 const cookieParser = require('cookie-parser');
 router.use(cookieParser())
 
+// Importing models
+const Order = require('../models/Order')
+const User = require('../models/User');
+const Product = require('../models/Product')
 
 // Post request 
 router.post('/', async (req, res) => {
     /* ***** CALCULATING orderValue ***** */
     // TODO: Remove, testing with console.log
     console.log('REQ.BODY.ITEMS :', req.body.items)
+
 
     let calcOrderValue = await req.body.items.reduce(async (accumulator, currentElement) => {
         const addedProd = await Product.findById({_id: currentElement});
@@ -57,6 +64,7 @@ router.post('/', async (req, res) => {
 
 })
 
+
 // get method from database
 router.get('/', jwtAuthentication, async (req, res) => {
         const user = await User.findOne({ email: req.cookies['auth-token']["user"]["email"]})
@@ -70,6 +78,7 @@ router.get('/', jwtAuthentication, async (req, res) => {
         } else {
             res.send('Du måste vara inloggad för at kunna se')
         }
+
 })
 
 module.exports= router;
