@@ -5,8 +5,9 @@ const orderSchema = mongoose.Schema({
   timeStamp: Date, 
   status : Boolean,
   items:[String], 
-  orderValue: Number
-  
+  orderValue: Number, 
+  price:Number
+
     }); 
 
 module.exports = mongoose.model('Order', orderSchema);
