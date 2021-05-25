@@ -12,14 +12,29 @@ router.use(cookieParser())
 
 
 // Post request 
-router.post('/', async(req, res) =>{
+router.post('/', async (req, res) => {
+    /* ***** CALCULATING orderValue ***** */
+    // TODO: Remove, testing with console.log
+    console.log('REQ.BODY.ITEMS :', req.body.items)
+
+    let calcOrderValue = await req.body.items.reduce(async (accumulator, currentElement) => {
+        const addedProd = await Product.findById({_id: currentElement});
+        // TODO: Remove, testing with console.log
+        console.log('addedProd :', addedProd);
+        console.log('accumulator :', accumulator);
+        return await accumulator + addedProd.price;
+    }, 0)
+    // TODO: Remove, testing with console.log 
+    console.log('calcOrderValue :', calcOrderValue);
+
+
     const user = await User.findOne({ email: req.cookies['auth-token']["user"]["email"]})
             
     const newOrder = await new Order({
         _id: new mongoose.Types.ObjectId(), 
         timeStamp : Date.now(), 
         status: true, 
-        orderValue: req.body.orderValue, 
+        orderValue: calcOrderValue, 
         items: req.body.items
         })
          
