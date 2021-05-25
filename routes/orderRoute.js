@@ -1,59 +1,61 @@
+const express = require('express').Router(); 
+const router = express.Router(); 
+const mongoose = require('mongoose'); 
 
-const mongoose = require('mongoose');
+const Order = require('../models/Order');
+const User = require('../models/User')
+const Product = require('../models/Product')
 const jwtAuthentication = require('../middleware/jwtAuthentication');
-const router = require('express').Router();
 
-const Order = require('../models/Order')
-const Product = require('../models/Product');
-const User = require('../models/User');
-
-// cookie parser
 const cookieParser = require('cookie-parser');
-// Behövs för att kunna hämta req.cookies
 router.use(cookieParser())
 
 
+// Post request 
+router.post('/', async(req, res) =>{
+    const user = await User.findOne({ email: req.cookies['auth-token']["user"]["email"]})
+            
+    const newOrder = await new Order({
+        _id: new mongoose.Types.ObjectId(), 
+        timeStamp : Date.now(), 
+        status: true, 
+        orderValue: req.body.orderValue, 
+        items: req.body.items
+        })
+         
+    console.log(req.body)
 
+         // Save Order in database
+  newOrder.save((err) => {
+    // Error Handeling with if ,else method
+    if(err) { 
+        return res.status(417).send('Expectation Failed! ')
 
-// Lägga till produkter
-router.post('/', (req, res) => {
-
-    const newOrder = new Order({
-
-        _id: 123,
-        timeStamp: Date.now(),
-        status: true,
-        items: [{
-            type: new mongoose.Schema.Types.ObjectId,
-            ref: 'Product'
-        }],
-        orderValue: Number // Skriva formel här
-    })
-
-    // Sparar användaren
-    newOrder.save((err) => {
-        if (err) {
-            res.json(err)
-        } else {
-            res.json(newOrder)
+    }else{
+        console.log('Create an Order')
+      
+        if(user){
+          user.orderHistory.push(newOrder._id); 
         }
-    })
-})
-
-
-router.get('/', jwtAuthentication, async (req, res) => {
-
-    const user =  User.findOne({ email: req.body.email })
-
-    if (user.role == 'customer') {
-        const orders =  Order.find({})
-        res.json(orders)
-    } else if (user.role == 'admin'){
-        const orders =  Order.find({})
-        res.json(user.orderHistory)
-    } else {
-        res.send('Du måste vara inloggad för at kunna se')
+        res.json(newOrder)
     }
+  })
+
 })
 
-module.exports = router;
+// get method from database
+router.get('/', jwtAuthentication, async (req, res) => {
+        const user = await User.findOne({ email: req.cookies['auth-token']["user"]["email"]})
+        // const user = await  User.findOne({ email: payload.uid.user.email}, {orderHistory: 1}).populate('orderHistory')
+        if (user.role == 'customer') {
+            const userOrders = await  User.findOne({ email: req.cookies['auth-token']["user"]["email"]}, {orderHistory: 1}).populate('orderHistory')
+            res.status(200).json(userOrders.orderHistory)
+        } else if (user.role == 'admin'){
+            const adminOrders = await  Order.find({})
+            res.json(adminOrders)
+        } else {
+            res.send('Du måste vara inloggad för at kunna se')
+        }
+})
+
+module.exports= router;
