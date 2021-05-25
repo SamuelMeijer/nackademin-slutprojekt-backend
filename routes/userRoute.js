@@ -54,22 +54,19 @@ router.post('/', async (req, res) => {
                     orderHistory: []
                 })
 
-                // Slänga in check av lösen?
-
                 // Saves the newUser-document to database with .save-method
                 newUser.save((err) => {
                     if (err) {
                         res.json(err)
                     } else {
+
+                        // Lägg till token
                         res.status(201).json(newUser)
                     }
                 })
-
-
             }
         })
     } else {
-
         res.send({ msg: `The email is already registered` })
     }
 
