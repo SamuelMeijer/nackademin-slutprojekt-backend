@@ -16,6 +16,7 @@ router.post('/', async (req, res) => {
 
    // Checks in User-document if the email inserted aldready exists in the database
    const checkEmail = await User.exists({ email: req.body.email })
+    console.log(checkEmail)
 
     // Encrypts the password inserted by the user, adds saltRounds-variable and adds encrypted password to the database
     bcrypt.hash(req.body.password, saltRounds, (err, hash) => {
@@ -38,7 +39,7 @@ router.post('/', async (req, res) => {
 
                 // Enum limits the value of role to be either customer or adming
                 // Sets 'customer' as default value to role
-                role: 'customer'/* { type: String, enum: ['customer', 'admin'], default: 'customer' } */,
+                role: 'customer',
                 adress: {
                     street: req.body.street,
                     zip: req.body.zip,
@@ -52,13 +53,14 @@ router.post('/', async (req, res) => {
             // If boolean 'checkEmail' is true (if email inserted already exists in database)
             if (checkEmail) {
 
-                console.log('error')
+                
                 res.status(409).send({ msg: 'Email already exists' })
 
             } else {
 
                 newUser.save((err) => {
                     if (err) {
+                        console.log(err)
                         res.json(err)
                     } else {
                         // res.status(201).json(newUser)

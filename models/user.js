@@ -1,20 +1,18 @@
 const mongoose = require('mongoose');
 
-// Till senare
-const Order = require('./Order')
 
 const userSchema = mongoose.Schema({
 
     _id: mongoose.Schema.Types.ObjectId,
-    email: { type: String, required: true },
-    password: { type: String, required: true },
-    name: { type: String },
-    role: String, // or customer
+    email: String, //{ type: String, required: true },
+    password: String,//{ type: String, required: true },
+    name: String,//{ type: String },
+    role: { type: String, enum: ['customer', 'admin'], default: 'customer' } ,
 
     adress: {
-        street: { type: String, required: true },
-        zip: { type: Number, required: true },
-        city: { type: String, required: true }
+        street: String, //{ type: String, required: true },
+        zip: Number, //,{ type: Number, required: true },
+        city: String, //{ type: String, required: true }
     },
    orderHistory: [{
     type: mongoose.Schema.Types.ObjectId,

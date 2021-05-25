@@ -14,9 +14,6 @@ const User = require('../models/User');
 const Product = require('../models/Product')
 
 
-
-
-
 // Adding products
 router.post('/',  async (req, res) => {
 
@@ -65,7 +62,7 @@ router.post('/',  async (req, res) => {
 router.get('/', jwtAuthentication, async (req, res) => {
 
     const user = await User.findOne({ email: req.cookies['auth-token']["user"]["email"]})
-  // const user = await  User.findOne({ email: payload.uid.email}, {orderHistory: 1}).populate('orderHistory')
+  // const user = await  User.findOne({ email: payload.uid.user.email}, {orderHistory: 1}).populate('orderHistory')
     console.log(user.role)
 
     if (user.role == 'customer') {
@@ -75,7 +72,7 @@ router.get('/', jwtAuthentication, async (req, res) => {
 
         console.log(userOrders.orderHistory)
 
-        res.json(userOrders.orderHistory)
+        res.status(200).json(userOrders.orderHistory)
        /*  const userOrderHistory = []
 
     user.orderHistory.forEach( async orderId => {
