@@ -1,5 +1,4 @@
-const express = require('express').Router(); 
-const router = express.Router(); 
+const router = require('express').Router(); 
 const mongoose = require('mongoose'); 
 
 const Order = require('../models/Order');
