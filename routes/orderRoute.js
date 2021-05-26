@@ -12,12 +12,17 @@ const jwtAuthentication = require('../middleware/jwtAuthentication');
 const cookieParser = require('cookie-parser');
 router.use(cookieParser())
 
+// Importing models
+const Order = require('../models/Order')
+const User = require('../models/User');
+const Product = require('../models/Product')
 
 // Post request 
 router.post('/', jwtAuthentication, async (req, res) => {
     /* ***** CALCULATING orderValue ***** */
     // TODO: Remove, testing with console.log
     console.log('REQ.BODY.ITEMS :', req.body.items)
+
 
     let calcOrderValue = await req.body.items.reduce(async (accumulator, currentElement) => {
         const addedProd = await Product.findById({_id: currentElement});
@@ -40,7 +45,7 @@ router.post('/', jwtAuthentication, async (req, res) => {
         orderValue: calcOrderValue, 
         items: req.body.items
         })
-    
+
 // Save Order in to the database
   newOrder.save(async(err) => {
 // Error handeling with if - else statement Method
@@ -62,6 +67,7 @@ router.post('/', jwtAuthentication, async (req, res) => {
   })
 
 })
+
 
 // Using Get method to get user from database
 router.get('/', jwtAuthentication, async (req, res) => {
