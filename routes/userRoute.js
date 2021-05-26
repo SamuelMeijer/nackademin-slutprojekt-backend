@@ -4,13 +4,12 @@ const router = require('express').Router();
 // Importing User-model
 const User = require('../models/User');
 
-// cookie parser - module?
+// Cookie-parser
 const cookieParser = require('cookie-parser');
-// 
 router.use(cookieParser())
-// bcrypt middleware/module?
-const bcrypt = require('bcrypt');
 
+// BCrypt
+const bcrypt = require('bcrypt');
 
 // Sets the value 10 to saltRounds 
 // - controls how much time is needed to calculate a single BCrypt hash
@@ -20,12 +19,12 @@ const saltRounds = 10;
 router.post('/', async (req, res) => {
 
     // Checks in User-document if the email inserted aldready exists in the database
-    const checkEmail = await User.exists({ email: req.body.email })
+    const emailExists = await User.exists({ email: req.body.email })
 
-    // If boolean 'checkEmail' is true (if email inserted already exists in database)
-    if (!checkEmail) {
+    // If email doesn't exist in the database the followin code will run
+    if (!emailExists) {
 
-        // Encrypts the password inserted by the user, adds saltRounds-variable and adds encrypted password to the database
+        // BCrypt-middleware encrypts the password inserted by the user, adds saltRounds-variable and returns an encrypted password: 'hash'
         bcrypt.hash(req.body.password, saltRounds, (err, hash) => {
 
             if (err) {
@@ -37,30 +36,28 @@ router.post('/', async (req, res) => {
 
                     // Sets the _id to an ObjectId created by mongoose
                     _id: new mongoose.Types.ObjectId(),
-
-                    //req.body = accessing data from the server
                     email: req.body.email,
 
-                    // Sets the password to hash from BCrypt
+                    // Inserts encrypted password with hash
                     password: hash,
                     name: req.body.name,
 
-                    // Sets 'customer' as default value to role
-                    // req.body.role can change the role to admin från insomnia/postman
+                    // Sets 'customer' as the default value to role
+                    // req.body.role can change the role to admin från insomnia/postman or directyly from mongoDB
                     role: 'customer',
                     adress: {
                         street: req.body.adress.street,
                         zip: req.body.adress.zip,
                         city: req.body.adress.city
                     },
+
                     // Sets the orderHistory to an empty array
                     orderHistory: []
                 })
 
-
-
                 // If the passwords entered matches
                 if (req.body.password == req.body.repeatPassword) {
+
                 // Saves the newUser-document to database with .save-method
                     newUser.save((err) => {
                         if (err) {
@@ -76,15 +73,12 @@ router.post('/', async (req, res) => {
                 } else {
                     res.status(409).send({ msg: 'Passwords does not match' })
                 }
-                
             }
         })
         // If the email entered already is registered
     } else {
         res.status(409).send({ msg: `The email is already registered` })
     }
-
-
 })
 
 
