@@ -15,6 +15,8 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 
+const jwtAuthentication = require('../middleware/jwtAuthentication')
+
 // Sets the value 10 to saltRounds 
 // - controls how much time is needed to calculate a single BCrypt hash
 const saltRounds = 10;
@@ -61,7 +63,7 @@ router.post('/', async (req, res) => {
                     // Sets the orderHistory to an empty array
                     orderHistory: []
                 })
-                
+
 
                 // Saves the newUser-document to database with .save-method
                 newUser.save(async (err) => {
@@ -69,59 +71,58 @@ router.post('/', async (req, res) => {
                         res.json(err)
                     } else {
 
-                        // Lägg till token
-                        // Return valid token for user to be singed in after registration
-                        console.log('before', newUser)
-
+                        // If the newUser exist (if it was saved above with no errors)
                         if (newUser) {
+                            // Adds information to the payload
                             const payload = {
                                 iss: 'sinus',
                                 uid: newUser.id
                             }
 
+                            // Signs the token with payload-information
                             const token = jwt.sign(payload, process.env.SECRET_AUTH, { expiresIn: '1h' })
 
-                            const authResp = {
+                            // Creates an object to assign to the cookie
+                            const responseBody = {
 
+                                // Collects the token signed above
                                 token: token,
                                 user: {
-                                    email: req.body.email,
-                                    name: req.body.name,
+                                    email:  newUser.email,
+                                    name: newUser.name,
                                     role: newUser.role,
                                     adress: {
-                                        street: req.body.adress.email,
-                                        zip: req.body.adress.zip,
-                                        city: req.body.adress.city
+                                        street: newUser.street,
+                                        zip: newUser.zip,
+                                        city: newUser.city
                                     }
                                 }
                             }
-
-
-                                res.cookie('auth-login', authResp)
-                                console.log(authResp)
-                
-                            
+                            // Saves responseBody to cookie with the name 'auth-token'
+                            res.cookie('auth-token', responseBody)
 
                         }
                     }
-                    // res.status(201).json(newUser)
-                    //console.log('after', newUser)
 
-                    const loginToken = req.cookies['auth-login']['token']
+                    // Collects the token in 'auth-token'-cookie to a variable
+                    const loginToken = req.cookies['auth-token']['token']
 
+                    // Verifies
                     jwt.verify(loginToken, process.env.SECRET_AUTH, (err, payload) => {
-                        if(err){
+                        if (err) {
                             res.json(err)
                         } else {
-                            if (req.body.password == req.body.repeatPassword){
-          
-                                res.status(201).json({newUser, loginToken})
+                            // Checks if the passwords entered matches
+                            if (req.body.password == req.body.repeatPassword) {
+                                // Creates a variable for the 'auth-token'-cookie
+                                const loginAuth = req.cookies['auth-token']
+                                console.log(loginAuth)
+                                res.status(201).json(loginAuth)
                             } else {
-        
-        
+
                                 res.status(409).send('Passwords entered does not match')
-                            } 
- 
+                            }
+
                         }
                     })
 
