@@ -24,14 +24,14 @@ router.get('/', async (req, res) => {
 router.post('/', jwtAuthentication, async (req, res) => {
   // Find and save user
   const user = await User.findOne({
-    //KOMMENTERA********************************************
+    //Find logged in user in the DB based on the email stored in cookies.
+
     email: req.cookies['auth-token']['user']['email'],
   });
   // Check if user has the role of admin
   if (user.role == 'admin') {
     // If user is an admin then post new product
-    // Save new product in newProduct that you create from Product Schema
-    // and model. id will be assigned from mongoose.
+    // Save new product in newProduct that you create from Product Schema and model. id will be assigned from mongoose.
     // req.body has parameters sent by client from POST request.
     const newProduct = new Product({
       _id: new mongoose.Types.ObjectId(),
@@ -51,6 +51,9 @@ router.post('/', jwtAuthentication, async (req, res) => {
         res.json(newProduct);
       }
     });
+  } else {
+    // If customer and not admin send msg
+    res.status(401).send({ msg: 'Not Authorized' });
   }
 });
 
@@ -58,7 +61,7 @@ router.post('/', jwtAuthentication, async (req, res) => {
 //Admin access only with jwtAuthentication middleware
 router.delete('/:id', jwtAuthentication, async (req, res) => {
   const user = await User.findOne({
-    // KOMMENTERA******************************************
+    //Find logged in user in the DB based on the email stored in cookies.
     email: req.cookies['auth-token']['user']['email'],
   });
   // Check if user has role of admin.
@@ -69,6 +72,9 @@ router.delete('/:id', jwtAuthentication, async (req, res) => {
     if (!removedProduct) return res.send({ msg: 'No product found' });
 
     res.send({ msg: 'The product has been deleted' });
+  } else {
+    // If customer and not admin send msg
+    res.status(401).send({ msg: 'Not Authorized' });
   }
 });
 
@@ -76,16 +82,14 @@ router.delete('/:id', jwtAuthentication, async (req, res) => {
 router.patch('/:id', jwtAuthentication, async (req, res) => {
   //Find and save user
   const user = await User.findOne({
-    // KOMMENTERA******************************************
+    //Find logged in user in the DB based on the email stored in cookies.
     email: req.cookies['auth-token']['user']['email'],
   });
   //If admin, allow to update
   if (user.role == 'admin') {
-    //To be able to update without filling in all fields
-    //find and save current product in currentProduct
+    //To be able to update without filling in all fields, find and save current product in currentProduct
     const currentProduct = await Product.findById(req.params.id);
-    //Find product by id and uppdate it to productUpdate
-    //If a field is not filled in, then use value from currentProduct
+    //Find product by id and uppdate it to productUpdate, if a field is not filled in, then use value from currentProduct
     const productUpdate = await Product.findByIdAndUpdate(
       req.params.id,
       {
@@ -108,6 +112,9 @@ router.patch('/:id', jwtAuthentication, async (req, res) => {
         res.json(productUpdate);
       }
     });
+  } else {
+    // If customer and not admin send msg
+    res.status(401).send({ msg: 'Not Authorized' });
   }
 });
 
