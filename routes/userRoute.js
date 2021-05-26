@@ -88,7 +88,7 @@ router.post('/', async (req, res) => {
                                 // Collects the token signed above
                                 token: token,
                                 user: {
-                                    email:  newUser.email,
+                                    email: newUser.email,
                                     name: newUser.name,
                                     role: newUser.role,
                                     adress: {
@@ -100,12 +100,13 @@ router.post('/', async (req, res) => {
                             }
                             // Saves responseBody to cookie with the name 'auth-token'
                             res.cookie('auth-token', responseBody)
+                            res.send(responseBody)
 
                         }
                     }
 
                     // Collects the token in 'auth-token'-cookie to a variable
-                    const loginToken = req.cookies['auth-token']['token']
+                    const loginToken = await req.cookies['auth-token']['token']
 
                     // Verifies
                     jwt.verify(loginToken, process.env.SECRET_AUTH, (err, payload) => {
