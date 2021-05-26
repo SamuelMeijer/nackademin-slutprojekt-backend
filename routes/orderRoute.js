@@ -1,9 +1,7 @@
 const router = require('express').Router(); 
 const mongoose = require('mongoose'); 
 
-const Order = require('../models/Order');
-const User = require('../models/User')
-const Product = require('../models/Product')
+
 const jwtAuthentication = require('../middleware/jwtAuthentication');
 
 
@@ -47,7 +45,7 @@ router.post('/', async (req, res) => {
     console.log(req.body)
 
          // Save Order in database
-  newOrder.save((err) => {
+  newOrder.save( async (err) => {
     // Error Handeling with if ,else method
     if(err) { 
         return res.status(417).send('Expectation Failed! ')
@@ -57,6 +55,7 @@ router.post('/', async (req, res) => {
       
         if(user){
           user.orderHistory.push(newOrder._id); 
+          await User.findByIdAndUpdate(user._id, user)
         }
         res.json(newOrder)
     }

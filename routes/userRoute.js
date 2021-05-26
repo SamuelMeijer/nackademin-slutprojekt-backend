@@ -4,8 +4,13 @@ const router = require('express').Router();
 // Importing User-model
 const User = require('../models/User');
 
-// Importing BCrypt-module
+// cookie parser - module?
+const cookieParser = require('cookie-parser');
+// 
+router.use(cookieParser())
+// bcrypt middleware/module?
 const bcrypt = require('bcrypt');
+
 
 // Sets the value 10 to saltRounds 
 // - controls how much time is needed to calculate a single BCrypt hash
@@ -16,8 +21,6 @@ router.post('/', async (req, res) => {
 
     // Checks in User-document if the email inserted aldready exists in the database
     const checkEmail = await User.exists({ email: req.body.email })
-    
-    console.log(checkEmail)
 
     // If boolean 'checkEmail' is true (if email inserted already exists in database)
     if (!checkEmail) {
@@ -54,20 +57,31 @@ router.post('/', async (req, res) => {
                     orderHistory: []
                 })
 
-                // Saves the newUser-document to database with .save-method
-                newUser.save((err) => {
-                    if (err) {
-                        res.json(err)
-                    } else {
 
-                        // Lägg till token
-                        res.status(201).json(newUser)
-                    }
-                })
+
+                // If the passwords entered matches
+                if (req.body.password == req.body.repeatPassword) {
+                // Saves the newUser-document to database with .save-method
+                    newUser.save((err) => {
+                        if (err) {
+                            res.json(err)
+                        } else {
+                            // Redirects to /auth-end point for authorization
+                            // This will automatically login the user 
+                            // Status code 307 = temporarily 
+                            res.redirect(307, '/api/auth');
+                        } 
+                    })
+                    // If the passwords entered doesn't match
+                } else {
+                    res.status(409).send({ msg: 'Passwords does not match' })
+                }
+                
             }
         })
+        // If the email entered already is registered
     } else {
-        res.send({ msg: `The email is already registered` })
+        res.status(409).send({ msg: `The email is already registered` })
     }
 
 
