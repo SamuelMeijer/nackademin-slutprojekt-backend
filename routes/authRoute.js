@@ -65,7 +65,7 @@ router.post('/', async (req, res) => {
         })
     // If no user was found with the provided email
     } else {
-        res.status(404).send('No user exists with the provided email')
+        res.status(404).send({ msg: 'No user exists with the provided email' })
     }
 })
 

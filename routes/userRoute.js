@@ -31,49 +31,51 @@ router.post('/', async (req, res) => {
                 res.json(err)
             } else {
 
-                // Creates a new document out of the User-model
-                const newUser = new User({
+                    // Creates a new document out of the User-model
+                    const newUser = new User({
 
-                    // Sets the _id to an ObjectId created by mongoose
-                    _id: new mongoose.Types.ObjectId(),
-                    email: req.body.email,
+                        // Sets the _id to an ObjectId created by mongoose
+                        _id: new mongoose.Types.ObjectId(),
+                        email: req.body.email,
 
-                    // Inserts encrypted password with hash
-                    password: hash,
-                    name: req.body.name,
+                        // Inserts encrypted password with hash
+                        password: hash,
+                        name: req.body.name,
 
-                    // Sets 'customer' as the default value to role
-                    // Can change the role to admin from mongoDB
-                    role: 'customer',
-                    adress: {
-                        street: req.body.adress.street,
-                        zip: req.body.adress.zip,
-                        city: req.body.adress.city
-                    },
+                        // Sets 'customer' as the default value to role
+                        // Can change the role to admin from mongoDB
+                        role: 'customer',
+                        adress: {
+                            street: req.body.adress.street,
+                            zip: req.body.adress.zip,
+                            city: req.body.adress.city
+                        },
 
-                    // Sets the orderHistory to an empty array
-                    orderHistory: []
-                })
-
-                // If the passwords entered matches
-                if (req.body.password == req.body.repeatPassword) {
-
-                // Saves the newUser-document to database with .save-method
-                    newUser.save((err) => {
-                        if (err) {
-                            res.json(err)
-                        } else {
-                            
-                            // Redirects to /auth-end point for authorization
-                            // This will automatically login the user 
-                            // Status code 307 = temporarily 
-                            res.redirect(307, '/api/auth');
-                        } 
+                        // Sets the orderHistory to an empty array
+                        orderHistory: []
                     })
-                    // If the passwords entered doesn't match
-                } else {
-                    res.status(409).send({ msg: 'Passwords does not match' })
-                }
+
+                    // If the passwords entered matches
+                    if (req.body.password == req.body.repeatPassword) {
+
+                        // Saves the newUser-document to database with .save-method
+                        newUser.save((err) => {
+                            if (err) {
+                                res.status(400).json(err)
+                            } else {
+
+                                // Redirects to /auth-end point for authorization
+                                // This will automatically login the user 
+                                // Status code 307 = temporarily 
+                                res.redirect(307, '/api/auth');
+                            }
+                        })
+
+                        // If the passwords entered doesn't match
+                    } else {
+                        res.status(409).send({ msg: 'Passwords does not match' })
+                    }
+
             }
         })
         // If the email entered already is registered
