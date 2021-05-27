@@ -1,38 +1,28 @@
+// Importing JSON Web Token
 const jwt = require('jsonwebtoken');
 
 module.exports = (req, res, next) => {
-  // Evalutes if admin-auth
-  if (req.cookies['auth-token']) {
-    //const token = req.cookies['auth-token']
-    const token = req.cookies['auth-token']['token'];
+    // Evalutes if a cookie with the name 'auth-token' exists
+    if (req.cookies['auth-token']) {
 
-    jwt.verify(token, process.env.SECRET_AUTH, async (err, payload) => {
-      if (err) {
-        res.json(err);
-      } else {
-        next();
-        //res.send('Du är en admin')
-        // vad som ska göras om man är admin
-      }
-    });
+        // Accessing the property 'token' of the object stored in a cookie with the name 'auth-token'
+        const token = req.cookies['auth-token']['token']
 
-    // Evalutes if customer-auth
-    /*  } else if (req.cookies['auth-token-customer']) {
-
-        const token = req.cookies['auth-token-customer']
-
-        jwt.verify(token, process.env.SECRET_CUSTOMER, async (err, payload) => {
+        // Evaluates if the provided token has the same password as environment variable 'SECRET_AUTH'
+        jwt.verify(token, process.env.SECRET_AUTH, async (err, payload) => {
+            // Evalutates if an error occurred with the validation
             if (err) {
                 res.json(err);
+            
+            // If no error occurred with the validation
             } else {
+                // Continue with the next route
                 next();
-                // res.send('Du är kund')
-                // vad som ska göras om man är kund
-            }
+            };
         });
-        */
-    // If none of the cookies can be found
-  } else {
-    res.status(401).send('Du måste var inloggad eller admin');
-  }
-};
+
+    // If no cookie with the name of 'auth-token' can be found
+    } else {
+        res.status(401).send({msg: 'Du måste var inloggad eller admin'})
+    };
+}
