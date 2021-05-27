@@ -15,46 +15,53 @@ const Product = require('../models/Product')
 
 // Post request 
 router.post('/', jwtAuthentication, async (req, res) => {
-    // Calculating orderValue
-    let calcOrderValue = await req.body.items.reduce(async (accumulator, currentElement) => {
-        const addedProd = await Product.findById({_id: currentElement});
+    // Evaluates if the order does not contain any items
+    if (req.body.items.length === 0) {
+        res.status(400).send('The order needs to contain items')
+    
+    } else {
+        // Calculating orderValue
+        // Iterating through req.body.items which is an array filled with productId:s and calculates the total sum of the order
+        let calcOrderValue = await req.body.items.reduce(async (accumulator, currentElement) => {
+            // Finding a product with the productID corresponding to the value of currentElement in the database
+            const addedProd = await Product.findById({_id: currentElement});
+            // Adding the price of the product to 'accumulator'
+            return await accumulator + addedProd.price;
+        }, 0) // Setting the starting value of accumulator to zero
 
-        return await accumulator + addedProd.price;
-    }, 0)
 
+        // Fetch data & using auth-token method by checking if the email adress is exist and it is correct
+        const user = await User.findOne({ email: req.cookies['auth-token']["user"]["email"]})
 
-// Fetch data & using auth-token method by checking if the email adress is exist and it is correct
-    const user = await User.findOne({ email: req.cookies['auth-token']["user"]["email"]})
+        //Create order by useing order models   
+        const newOrder = await new Order({
+            _id: new mongoose.Types.ObjectId(), 
+            timeStamp : Date.now(), 
+            status: true, 
+            orderValue: calcOrderValue, 
+            items: req.body.items
+            })
 
-//Create order by useing order models   
-    const newOrder = await new Order({
-        _id: new mongoose.Types.ObjectId(), 
-        timeStamp : Date.now(), 
-        status: true, 
-        orderValue: calcOrderValue, 
-        items: req.body.items
+        // Save Order in to the database
+        newOrder.save(async(err) => {
+        // Error handeling with if - else statement Method
+            if(err) { 
+
+        // if the order doesn't exist user can not submit anything, else creat an order
+                return res.status(417).send('Expectation Failed! ')
+
+            }else{
+                
+        // 1- Push the order to orderHistodry (orderHistory is exist in user account)
+        //2- Save the orde by recognizig (_id), (in case, if u are an user and log-in befor ordering)
+                if(user){
+                user.orderHistory.push(newOrder._id); 
+                await User.findByIdAndUpdate(user._id, user)
+                }
+                res.json(newOrder)
+            }
         })
-
-// Save Order in to the database
-  newOrder.save(async(err) => {
-// Error handeling with if - else statement Method
-    if(err) { 
-
- // if the order doesn't exist user can not submit anything, else creat an order
-        return res.status(417).send('Expectation Failed! ')
-
-    }else{
-         
-// 1- Push the order to orderHistodry (orderHistory is exist in user account)
-//2- Save the orde by recognizig (_id), (in case, if u are an user and log-in befor ordering)
-        if(user){
-          user.orderHistory.push(newOrder._id); 
-          await User.findByIdAndUpdate(user._id, user)
-        }
-        res.json(newOrder)
     }
-  })
-
 })
 
 
