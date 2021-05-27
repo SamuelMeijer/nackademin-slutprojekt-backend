@@ -61,6 +61,7 @@ router.post('/', async (req, res) => {
                         // Saves the newUser-document to database with .save-method
                         newUser.save((err) => {
                             if (err) {
+                                // If, for example, one or many fields are empty in the registration field/s
                                 res.status(400).json(err)
                             } else {
 
