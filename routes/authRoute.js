@@ -1,58 +1,47 @@
-const mongoose = require('mongoose');
+// Imports
 const router = require('express').Router();
-const User = require('../models/User');
-const userRoute = require('../routes/userRoute')
 
-// cookie parser - module?
+// Importing User-model
+const User = require('../models/User');
+
+// Importing cookie-parser
 const cookieParser = require('cookie-parser');
-// Behövs för att kunna hämta req.cookies
-// Skapar middleware?
+// Used to access req.cookies
 router.use(cookieParser())
 
-// bcrypt middleware/module?
+// Importing bcrypt
 const bcrypt = require('bcrypt');
 
-// json web token middleware/module?
+// Importing JSON Web Token
 const jwt = require('jsonwebtoken');
 
-
 router.post('/', async (req, res) => {
-
-    // Söker efter användarnamnet i USER-collectionen
+    // Searching for a user in the User-collection in the database with an email corresponding to the email provided by the request
     const user = await User.findOne({ email: req.body.email })
 
-    // Om användaren finns (user == true)
+    // Evalutes if a user was found
     if (user) {
-
-        // Kolla om lösenordet stämmer
-        // Jämför första och andra parametern
-        // Ingen callback här!!!
+        // Comparing if the password provided by the request is the same as the password saved in the database
         bcrypt.compare(req.body.password, user.password, function (err, result) {
-
-            // Vid fel
+            // Evalutes if an error occurred while comparing passwords
             if (err) {
+                // If an error occurred, respond with an error-message
                 res.json(err)
-            }
+            } else {
+                // Evaluates if the compared passwords match
+                if (result === true) {
+                    // Initializing an object that will be used as a payload in a JSON Web Token
+                    const payload = {
+                        // Issued by
+                        iss: 'sinus',
+                        // User-ID
+                        uid: user._id
+                    }
 
-            // Om lösenorden matchar (result !== false, resultatet är inte falskt, eeh?)
-            // KOLLA DETTA IMORGON MED SAMUEL!!! :D
-            if (result !== false) {
+                    // Genereates a JSON Web Token containing the payload and SECRET with a lifetime of 1 hour
+                    const token = jwt.sign(payload, process.env.SECRET_AUTH, { expiresIn: "1h" });
 
-                const payload = {
-
-                    // Utfärdat av
-                    iss: 'sinus',
-                    // Utgångsdatum - en timme i detta fall
-                    // exp: Math.floor(Date.now() / 1000) + (60 + 60),
-                    // Kanske senare?
-                    // Lägger till användare hämtat från user._id
-                    uid: user._id
-                }
-
-                const token = jwt.sign(payload, process.env.SECRET_AUTH, { expiresIn: "1h" });
-                    
-                // User-information syns i jwt.io, ok?
-                    
+                    // Initializing an object containing the generated token and the userData provided by the database 
                     const responseBody = {
                         token: token,
                         user: {
@@ -63,77 +52,21 @@ router.post('/', async (req, res) => {
                         }
                     };
                     
+                    // Generating a cookie called 'auth-token' containing the object referred to by 'responseBody'
                     res.cookie('auth-token', responseBody)
+                    // Sending the object referred to by responseBody to the client
                     res.send(responseBody);
-                    // res.json istället?
-                  
-                /*
-                if (user.role == 'admin') {
-                    const token = jwt.sign(payload, process.env.SECRET_ADMIN)
-                    res.cookie('auth-token-admin', token)
-                    res.send(`Hej ${user.name}! Du är nu i ${user.role}-läge`)
-                } else if (user.role == 'customer') {
-                    const token = jwt.sign(payload, process.env.SECRET_CUSTOMER)
-                    res.cookie('auth-token-customer', token)
-                    res.send(`Hej ${user.name}! Du är nu i ${user.role}-läge`)
-                } else {
-                    res.send('Du har ej behörighet')
-                }
-                */
 
-            } else {
-                res.send('Användarnamn eller lösenord stämmer ej!')
+                // If the compared password does not match
+                } else {
+                    res.status(403).send('The provided email or password is incorrect')
+                }
             }
         })
+    // If no user was found with the provided email
     } else {
-        res.send('Hittar ej användare')
+        res.status(404).send('No user exists with the provided email')
     }
 })
-
-
-
-// ***** Testing authentication ******
-const jwtAuthentication = require('../middleware/jwtAuthentication');
-
-router.get('/', jwtAuthentication, (req, res, next) => {
-    res.send('Hejhej')
-})
-
-/* ***** FLYTTAR TILL MIDDLEWARE *****
-// Bara test för auth
-router.get('/', (req, res) => {
-
-    // deletes the cookie chosen
-    // res.status(202).clearCookie('auth-token-customer').send('admin cookie is cleared')
-
-    if (req.cookies['auth-token-admin']) {
-
-        const token = req.cookies['auth-token-admin']
-
-        jwt.verify(token, process.env.SECRET_ADMIN, async (err, payload) => {
-
-            if (err) {
-                res.json(err)
-            } else {
-                res.send('Du är en admin')
-                // vad som ska göras om man är admin
-            }
-        })
-
-// Testing authentication
-const jwtAuthentication = require('../middleware/jwtAuthentication');
-
-router.get('/', jwtAuthentication, (req, res, next) => {
-    res.send('Hejhej')
-})
-***** FLYTTAR TILL MIDDLEWARE ***** */
-
-// Loggar ut användare
-router.delete('/',  (req, res) => {
-    //const user =  User.findOne({ email: req.body.email })
-    res.status(202).clearCookie('auth-token').send(`Du har loggat ut!`)
-})
-
-
 
 module.exports = router;
