@@ -26,15 +26,15 @@ router.post('/', async (req, res) => {
     if (user) {
         // Comparing if the password provided by the request is the same as the password saved in the database
         bcrypt.compare(req.body.password, user.password, function (err, result) {
-            // Evalutes if an error occured while comparing passwords
+            // Evalutes if an error occurred while comparing passwords
             if (err) {
-                // If an error occured, respond with an error-message
+                // If an error occurred, respond with an error-message
                 res.json(err)
             }
 
             // Evaluates if the compared passwords match
             if (result === true) {
-                // Generating a payload that will be used in a JSON Web Token
+                // Initializing an object that will be used as a payload in a JSON Web Token
                 const payload = {
                     // Issued by
                     iss: 'sinus',
@@ -45,7 +45,7 @@ router.post('/', async (req, res) => {
                 // Genereates a JSON Web Token containing the payload and SECRET with a lifetime of 1 hour
                 const token = jwt.sign(payload, process.env.SECRET_AUTH, { expiresIn: "1h" });
 
-                // Initiating an object containing the generated token and the userData provided by the database 
+                // Initializing an object containing the generated token and the userData provided by the database 
                 const responseBody = {
                     token: token,
                     user: {
@@ -56,7 +56,7 @@ router.post('/', async (req, res) => {
                     }
                 };
                 
-                // Generating a cookie called 'auth-token' containing the object reffered to by 'responseBody'
+                // Generating a cookie called 'auth-token' containing the object referred to by 'responseBody'
                 res.cookie('auth-token', responseBody)
                 // Sending the object referred to by responseBody to the client
                 res.send(responseBody);
