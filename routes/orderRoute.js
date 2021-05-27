@@ -15,20 +15,13 @@ const Product = require('../models/Product')
 
 // Post request 
 router.post('/', jwtAuthentication, async (req, res) => {
-    /* ***** CALCULATING orderValue ***** */
-    // TODO: Remove, testing with console.log
-    console.log('REQ.BODY.ITEMS :', req.body.items)
-
-
+    // Calculating orderValue
     let calcOrderValue = await req.body.items.reduce(async (accumulator, currentElement) => {
         const addedProd = await Product.findById({_id: currentElement});
-        // TODO: Remove, testing with console.log
-        console.log('addedProd :', addedProd);
-        console.log('accumulator :', accumulator);
+
         return await accumulator + addedProd.price;
     }, 0)
-    // TODO: Remove, testing with console.log 
-    console.log('calcOrderValue :', calcOrderValue);
+
 
 // Fetch data & using auth-token method by checking if the email adress is exist and it is correct
     const user = await User.findOne({ email: req.cookies['auth-token']["user"]["email"]})
