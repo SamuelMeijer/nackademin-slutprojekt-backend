@@ -43,7 +43,7 @@ router.post('/', async (req, res) => {
                     name: req.body.name,
 
                     // Sets 'customer' as the default value to role
-                    // req.body.role can change the role to admin från insomnia/postman or directyly from mongoDB
+                    // Can change the role to admin from mongoDB
                     role: 'customer',
                     adress: {
                         street: req.body.adress.street,
@@ -63,6 +63,7 @@ router.post('/', async (req, res) => {
                         if (err) {
                             res.json(err)
                         } else {
+                            
                             // Redirects to /auth-end point for authorization
                             // This will automatically login the user 
                             // Status code 307 = temporarily 
