@@ -1,11 +1,8 @@
 // Imports
-const mongoose = require('mongoose');
 const router = require('express').Router();
 
-// Importing userRoute and User-model
+// Importing User-model
 const User = require('../models/User');
-// TODO REMOVE? Not used in the application
-const userRoute = require('../routes/userRoute')
 
 // Importing cookie-parser
 const cookieParser = require('cookie-parser');
@@ -30,40 +27,40 @@ router.post('/', async (req, res) => {
             if (err) {
                 // If an error occurred, respond with an error-message
                 res.json(err)
-            }
-
-            // Evaluates if the compared passwords match
-            if (result === true) {
-                // Initializing an object that will be used as a payload in a JSON Web Token
-                const payload = {
-                    // Issued by
-                    iss: 'sinus',
-                    // User-ID
-                    uid: user._id
-                }
-
-                // Genereates a JSON Web Token containing the payload and SECRET with a lifetime of 1 hour
-                const token = jwt.sign(payload, process.env.SECRET_AUTH, { expiresIn: "1h" });
-
-                // Initializing an object containing the generated token and the userData provided by the database 
-                const responseBody = {
-                    token: token,
-                    user: {
-                        email: user.email,
-                        name: user.name,
-                        role: user.role,
-                        adress: user.adress
-                    }
-                };
-                
-                // Generating a cookie called 'auth-token' containing the object referred to by 'responseBody'
-                res.cookie('auth-token', responseBody)
-                // Sending the object referred to by responseBody to the client
-                res.send(responseBody);
-
-            // If the compared password does not match
             } else {
-                res.status(403).send('The provided email or password is incorrect')
+                // Evaluates if the compared passwords match
+                if (result === true) {
+                    // Initializing an object that will be used as a payload in a JSON Web Token
+                    const payload = {
+                        // Issued by
+                        iss: 'sinus',
+                        // User-ID
+                        uid: user._id
+                    }
+
+                    // Genereates a JSON Web Token containing the payload and SECRET with a lifetime of 1 hour
+                    const token = jwt.sign(payload, process.env.SECRET_AUTH, { expiresIn: "1h" });
+
+                    // Initializing an object containing the generated token and the userData provided by the database 
+                    const responseBody = {
+                        token: token,
+                        user: {
+                            email: user.email,
+                            name: user.name,
+                            role: user.role,
+                            adress: user.adress
+                        }
+                    };
+                    
+                    // Generating a cookie called 'auth-token' containing the object referred to by 'responseBody'
+                    res.cookie('auth-token', responseBody)
+                    // Sending the object referred to by responseBody to the client
+                    res.send(responseBody);
+
+                // If the compared password does not match
+                } else {
+                    res.status(403).send('The provided email or password is incorrect')
+                }
             }
         })
     // If no user was found with the provided email
@@ -72,11 +69,5 @@ router.post('/', async (req, res) => {
     }
 })
 
-// TODO: Remove? Not used in application
-// Loggar ut användare
-router.delete('/',  (req, res) => {
-    //const user =  User.findOne({ email: req.body.email })
-    res.status(202).clearCookie('auth-token').send(`Du har loggat ut!`)
-})
 
 module.exports = router;
